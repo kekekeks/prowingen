@@ -6,17 +6,16 @@ using namespace proxygen;
 using namespace folly;
 
 
-class RequestWrapper : public ComObject<IRequest, &IID_IRequest>
+class ReqContext
 {
-    std::unique_ptr<folly::IOBuf> _body;
+    public:
+        std::unique_ptr<folly::IOBuf> _body;
+        ReqContext(std::unique_ptr<folly::IOBuf> body)
+        {
+            _body = std::move(body);
+        }
 
-public:
-    RequestWrapper(std::unique_ptr<folly::IOBuf> body)
-    {
-        _body = std::move(body);
-    }
 };
-
 
 class RequestHandlerWrapper : public RequestHandler
 {
@@ -53,7 +52,7 @@ public:
 
     void onEOM() noexcept
     {
-        _handler->OnRequest(new ResponseBuilder(downstream_));
+        _handler->OnRequest(new ReqContext(std::move(_body)), new ResponseBuilder(downstream_));
     }
 
     void onUpgrade(UpgradeProtocol protocol) noexcept
@@ -104,6 +103,18 @@ public:
     }
 };
 
+
+class RequestWrapper : public ComObject<IRequestWrapper, &IID_IRequestWrapper>
+{
+public:
+    virtual HRESULT Dispose(ReqContext*req)
+    {
+        delete req;
+        return S_OK;
+    }
+};
+
+
 extern RequestHandler* CreateHandler(IRequestHandler*handler)
 {
     return new RequestHandlerWrapper(handler);
@@ -112,4 +123,10 @@ extern RequestHandler* CreateHandler(IRequestHandler*handler)
 extern IResponseWrapper* CreateResponseWrapper()
 {
     return new ResponseWrapper();
+}
+
+extern IRequestWrapper* CreateRequestWrapper()
+{
+    return new RequestWrapper();
+
 }

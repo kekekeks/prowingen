@@ -16,6 +16,7 @@ namespace Prowingen
 			{
 				"libprowingen.so",
 				"../../../../native/bin/Debug/libprowingen.so",
+				"bin/Debug/libprowingen.so"
 
 			}.Select (Path.GetFullPath).Where (File.Exists).First ();
 
@@ -35,20 +36,19 @@ namespace Prowingen
 
 		class RequestHandler : IRequestHandler
 		{
-			readonly Action<Response> _cb;
-			public RequestHandler (Action<Response> cb)
+			readonly Action<Request, Response> _cb;
+			public RequestHandler (Action<Request, Response> cb)
 			{
 				_cb = cb;
 			}
 
-			public void OnRequest(IntPtr pResponse)
+			public void OnRequest(IntPtr pRequest, IntPtr pResponse)
 			{
-				var wrapper = new Response (pResponse);
-				_cb (wrapper);
+				_cb (new Request (pRequest), new Response (pResponse));
 			}
 		}
 
-		public static IHttpServer CreateServer (Action<Response> cb)
+		public static IHttpServer CreateServer (Action<Request, Response> cb)
 		{
 			return Native.Value.CreateServer (new RequestHandler (cb));
 		}

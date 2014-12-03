@@ -30,6 +30,13 @@ class ProwingenFactory : public ComObject<IProwingenFactory, &IID_IProwingenFact
         *ppv=::CreateResponseWrapper();
         return S_OK;
     }
+
+
+    virtual HRESULT CreateRequestWrapper(IRequestWrapper**ppv)
+    {
+        *ppv=::CreateRequestWrapper();
+        return S_OK;
+    }
 };
 
 

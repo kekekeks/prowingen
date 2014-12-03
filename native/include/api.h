@@ -11,14 +11,16 @@ struct IResponseWrapper : public IUnknown
     virtual HRESULT Complete(proxygen::ResponseBuilder*builder) = 0;
 };
 
-struct IRequest : public IUnknown
-{
+class ReqContext;
 
+struct IRequestWrapper : public IUnknown
+{
+    virtual HRESULT Dispose(ReqContext*ctx) = 0;
 };
 
 struct IRequestHandler : public IUnknown
 {
-    virtual HRESULT OnRequest(void*) = 0;
+    virtual HRESULT OnRequest(void*,void*) = 0;
 };
 
 struct IHttpServer : public IUnknown
@@ -34,6 +36,7 @@ struct IProwingenFactory : public IUnknown
 {
     virtual HRESULT CreateServer(IRequestHandler*factory, IHttpServer**ppServer) = 0;
     virtual HRESULT CreateResponseWrapper(IResponseWrapper**ppv) = 0;
+    virtual HRESULT CreateRequestWrapper(IRequestWrapper**ppv) = 0;
 };
 
 
@@ -41,7 +44,7 @@ struct IProwingenFactory : public IUnknown
 extern const GUID IID_IHttpServer;
 extern const GUID IID_IProwingenFactory;
 extern const GUID IID_IRequestHandler;
-extern const GUID IID_IRequest;
+extern const GUID IID_IRequestWrapper;
 extern const GUID IID_IResponseWrapper;
 
 #ifdef INCLUDE_GUID
@@ -54,7 +57,7 @@ const GUID IID_IProwingenFactory = { 0xe4ea9822, 0x30c8, 0x4319, { 0x9d, 0x80, 0
 // [Guid("6307a020-22f4-462f-aee0-15e7bc555c4d")]
 const GUID IID_IRequestHandler_ = { 0x6307a020, 0x22f4, 0x462f, { 0xae, 0xe0, 0x15, 0xe7, 0xbc, 0x55, 0x5c, 0x4d } };
 // [Guid("ab57d7ab-8825-4d9c-9c7b-d03c2f2884ee")]
-const GUID IID_IRequest = { 0xab57d7ab, 0x8825, 0x4d9c, { 0x9c, 0x7b, 0xd0, 0x3c, 0x2f, 0x28, 0x84, 0xee } };
+const GUID IID_IRequestWrapper = { 0xab57d7ab, 0x8825, 0x4d9c, { 0x9c, 0x7b, 0xd0, 0x3c, 0x2f, 0x28, 0x84, 0xee } };
 
 // [Guid("24e1a430-27f6-4fd4-a0a4-95e9dea8d51a")]
 const GUID IID_IResponseWrapper = { 0x24e1a430, 0x27f6, 0x4fd4, { 0xa0, 0xa4, 0x95, 0xe9, 0xde, 0xa8, 0xd5, 0x1a } };

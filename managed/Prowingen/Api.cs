@@ -13,6 +13,8 @@ namespace Prowingen
 		IHttpServer CreateServer (IRequestHandler factory);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		IResponseWrapper CreateResponseWrapper ();
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		IRequestWrapper CreateRequestWrapper ();
 	}
 
 
@@ -30,12 +32,12 @@ namespace Prowingen
 	[Guid("6307a020-22f4-462f-aee0-15e7bc555c4d")]
 	interface IRequestHandler
 	{
-		void OnRequest (IntPtr request);
+		void OnRequest (IntPtr request, IntPtr response);
 	}
 
 	[ComImport, ComVisible (true), InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("24e1a430-27f6-4fd4-a0a4-95e9dea8d51a")]
-	public interface IResponseWrapper
+	interface IResponseWrapper
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void SetCode(IntPtr r, int code, [MarshalAs (UnmanagedType.LPStr)]string status);
@@ -52,9 +54,10 @@ namespace Prowingen
 
 	[ComImport, ComVisible (true), InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("ab57d7ab-8825-4d9c-9c7b-d03c2f2884ee")]
-	public interface  IRequest
+	interface  IRequestWrapper
 	{
-
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		void Dispose (IntPtr p);
 	}
 
 }
