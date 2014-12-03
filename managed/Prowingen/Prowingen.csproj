@@ -36,8 +36,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Api.cs" />
     <Compile Include="Prowingen.cs" />
-    <Compile Include="ProwingenExtensions.cs" />
     <Compile Include="LinuxLoader.cs" />
+    <Compile Include="Response.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

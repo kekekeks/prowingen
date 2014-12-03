@@ -9,4 +9,5 @@
 
 
 extern proxygen::RequestHandler* CreateHandler(IRequestHandler*handler);
+extern IResponseWrapper* CreateResponseWrapper();
 #endif // COMMON_H_INCLUDED

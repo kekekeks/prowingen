@@ -8,7 +8,6 @@ namespace Prowingen
 {
 	public static class Factory
 	{
-
 		delegate void CreateFactoryProc (out IntPtr pUnk);
 
 		static IProvingenFactory Init ()
@@ -26,21 +25,33 @@ namespace Prowingen
 
 			var createFactory = Marshal.GetDelegateForFunctionPointer<CreateFactoryProc> (pProc);
 
-
 			IntPtr pUnk;
 			createFactory (out pUnk);
 			var factory = (IProvingenFactory)Marshal.GetObjectForIUnknown (pUnk);
 			return factory;
 		}
 
-		static readonly Lazy<IProvingenFactory> _factory = new Lazy<IProvingenFactory> (Init);
+		internal static readonly Lazy<IProvingenFactory> Native = new Lazy<IProvingenFactory> (Init);
 
-		public static IHttpServer CreateServer (IRequestHandler handlerFactory)
+		class RequestHandler : IRequestHandler
 		{
-			return _factory.Value.CreateServer (handlerFactory);
+			readonly Action<Response> _cb;
+			public RequestHandler (Action<Response> cb)
+			{
+				_cb = cb;
+			}
 
+			public void OnRequest(IntPtr pResponse)
+			{
+				var wrapper = new Response (pResponse);
+				_cb (wrapper);
+			}
 		}
 
+		public static IHttpServer CreateServer (Action<Response> cb)
+		{
+			return Native.Value.CreateServer (new RequestHandler (cb));
+		}
 	}
 }
 

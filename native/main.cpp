@@ -24,6 +24,12 @@ class ProwingenFactory : public ComObject<IProwingenFactory, &IID_IProwingenFact
         *ppServer = new HttpServerWrapper(handler);
         return S_OK;
     }
+
+    virtual HRESULT CreateResponseWrapper(IResponseWrapper**ppv)
+    {
+        *ppv=::CreateResponseWrapper();
+        return S_OK;
+    }
 };
 
 

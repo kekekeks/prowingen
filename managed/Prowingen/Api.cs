@@ -11,6 +11,8 @@ namespace Prowingen
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		IHttpServer CreateServer (IRequestHandler factory);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		IResponseWrapper CreateResponseWrapper ();
 	}
 
 
@@ -26,26 +28,26 @@ namespace Prowingen
 		
 	[ComImport, ComVisible (true), InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("6307a020-22f4-462f-aee0-15e7bc555c4d")]
-	public interface IRequestHandler
+	interface IRequestHandler
 	{
-		void OnRequest (IRequest request, IResponse response);
+		void OnRequest (IntPtr request);
 	}
 
 	[ComImport, ComVisible (true), InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("24e1a430-27f6-4fd4-a0a4-95e9dea8d51a")]
-	public interface IResponse
+	public interface IResponseWrapper
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		void SetCode(int code, [MarshalAs (UnmanagedType.LPStr)]string status);
+		void SetCode(IntPtr r, int code, [MarshalAs (UnmanagedType.LPStr)]string status);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		void AppendHeader([MarshalAs (UnmanagedType.LPStr)]string key, [MarshalAs (UnmanagedType.LPStr)]string value);
+		void AppendHeader(IntPtr r, [MarshalAs (UnmanagedType.LPStr)]string key, [MarshalAs (UnmanagedType.LPStr)]string value);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		void AppendBody(IntPtr data, int size, bool flush);
+		void AppendBody(IntPtr r, IntPtr data, int size, bool flush);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		void Complete();
+		void Complete(IntPtr r);
 	}
 
 	[ComImport, ComVisible (true), InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]

@@ -17,47 +17,6 @@ public:
     }
 };
 
-class ResponseWrapper : public ComObject<IResponse, &IID_IResponse>
-{
-    ResponseHandler* _downstream;
-    std::unique_ptr<ResponseBuilder> _builder;
-
-public:
-    ResponseWrapper(ResponseHandler* downstream)
-    {
-        _downstream = downstream;
-        _builder = unique_ptr<ResponseBuilder>(new ResponseBuilder(downstream));
-
-    }
-
-    virtual HRESULT SetCode(int code, char* status)
-    {
-        _builder->status(code, "OK");
-        return S_OK;
-    }
-    virtual HRESULT AppendHeader(char* key, char* value)
-    {
-        _builder->header(key, value);
-        return S_OK;
-    }
-
-    virtual HRESULT AppendBody(void* data, int size, bool flush)
-    {
-        _builder->body(IOBuf::copyBuffer((char*)data, size));
-        if(flush)
-            _builder->send();
-        return S_OK;
-    }
-
-    virtual HRESULT Complete()
-    {
-        _builder->sendWithEOM();
-        return S_OK;
-    }
-};
-
-
-
 
 class RequestHandlerWrapper : public RequestHandler
 {
@@ -94,9 +53,7 @@ public:
 
     void onEOM() noexcept
     {
-        auto requestWrapper = ComPtr<IRequest>(new RequestWrapper(std::move(_body)));
-        auto responseWrapper = ComPtr<IResponse> (new ResponseWrapper(downstream_));
-        _handler->OnRequest(requestWrapper, responseWrapper);
+        _handler->OnRequest(new ResponseBuilder(downstream_));
     }
 
     void onUpgrade(UpgradeProtocol protocol) noexcept
@@ -116,7 +73,43 @@ public:
 };
 
 
+
+class ResponseWrapper : public ComObject<IResponseWrapper, &IID_IResponseWrapper>
+{
+
+public:
+    virtual HRESULT SetCode(proxygen::ResponseBuilder*builder, int code, char* status)
+    {
+        builder->status(code, "OK");
+        return S_OK;
+    }
+    virtual HRESULT AppendHeader(proxygen::ResponseBuilder*builder, char* key, char* value)
+    {
+        builder->header(key, value);
+        return S_OK;
+    }
+
+    virtual HRESULT AppendBody(proxygen::ResponseBuilder*builder, void* data, int size, bool flush)
+    {
+        builder->body(IOBuf::copyBuffer((char*)data, size));
+        if(flush)
+            builder->send();
+        return S_OK;
+    }
+
+    virtual HRESULT Complete(proxygen::ResponseBuilder*builder)
+    {
+        builder->sendWithEOM();
+        return S_OK;
+    }
+};
+
 extern RequestHandler* CreateHandler(IRequestHandler*handler)
 {
     return new RequestHandlerWrapper(handler);
+}
+
+extern IResponseWrapper* CreateResponseWrapper()
+{
+    return new ResponseWrapper();
 }
