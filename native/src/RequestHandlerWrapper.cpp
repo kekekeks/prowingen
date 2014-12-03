@@ -99,6 +99,7 @@ public:
     virtual HRESULT Complete(proxygen::ResponseBuilder*builder)
     {
         builder->sendWithEOM();
+        delete builder;
         return S_OK;
     }
 };

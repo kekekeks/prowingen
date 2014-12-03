@@ -5,7 +5,7 @@ namespace Prowingen
 	public unsafe class Response
 	{
 		static readonly IResponseWrapper Wrapper = Prowingen.Factory.Native.Value.CreateResponseWrapper();
-		readonly IntPtr _native;
+		IntPtr _native;
 		internal Response(IntPtr native)
 		{
 			_native = native;
@@ -13,16 +13,19 @@ namespace Prowingen
 
 		public void SetCode(int code, string status)
 		{
+			Check ();
 			Wrapper.SetCode (_native, code, status);
 		}
 
 		public void AppendHeader(string key, string value)
 		{
+			Check ();
 			Wrapper.AppendHeader (_native, key, value);
 		}
 
 		public void AppendBody(IntPtr data, int size, bool flush)
 		{
+			Check ();
 			Wrapper.AppendBody (_native, data, size, flush);
 		}
 
@@ -41,9 +44,16 @@ namespace Prowingen
 			AppendBody (data, 0, data.Length, flush);
 		}
 
+		void Check()
+		{
+			if (_native == IntPtr.Zero)
+				throw new InvalidOperationException ("Request is already completed");
+		}
+
 		public void Complete()
 		{
 			Wrapper.Complete (_native);
+			_native = IntPtr.Zero;
 		}
 
 
