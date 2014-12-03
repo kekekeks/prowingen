@@ -12,6 +12,7 @@ namespace Sandbox
 		{
 			public void OnRequest(IRequest req, IResponse resp)
 			{
+				return;
 				resp.SetCode (200, "OK");
 				resp.AppendHeader ("Content-Type", "text/plain");
 				resp.AppendBody (Encoding.UTF8.GetBytes ("Hello world!\n"));

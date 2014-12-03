@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -7,40 +9,33 @@ namespace Prowingen
 	public static class Factory
 	{
 
-		delegate void ThreadInitProc (IntPtr arg);
-		[DllImport("/home/kekekeks/Projects/prowingen/native/bin/Debug/libprowingen.so")]
-		static extern int CreateFactory(out IntPtr pUnk);
+		delegate void CreateFactoryProc (out IntPtr pUnk);
 
-		/*
-		[DllImport("/home/kekekeks/Projects/prowingen/native/bin/Debug/libprowingen.so")]
-		static extern void SetThreadInitCallback (ThreadInitProc cb);
-		[DllImport("/home/kekekeks/Projects/prowingen/native/bin/Debug/libprowingen.so")]
-		static extern void ContinueThreadInit (IntPtr arg);
-
-		static void ThreadInit (IntPtr ptr)
+		static IProvingenFactory Init ()
 		{
-			if (handle.IsAllocated)
-				ContinueThreadInit (ptr);
-		}
+			var path = new[]
+			{
+				"libprowingen.so",
+				"../../../../native/bin/Debug/libprowingen.so",
 
-		static GCHandle handle;
-		*/
+			}.Select (Path.GetFullPath).Where (File.Exists).First ();
+
+			var linuxLoader = new LinuxLoader ();
+			var lib = linuxLoader.LoadLibrary (null, path);
+			var pProc = linuxLoader.GetProcAddress (lib, "CreateFactory");
+
+			var createFactory = Marshal.GetDelegateForFunctionPointer<CreateFactoryProc> (pProc);
 
 
-		static IProvingenFactory Init()
-		{
 			IntPtr pUnk;
-			CreateFactory (out pUnk);
-			var factory = (IProvingenFactory) Marshal.GetObjectForIUnknown (pUnk);
-			/*ThreadInitProc cb = ThreadInit;
-			handle = GCHandle.Alloc (cb, GCHandleType.Pinned);
-			//SetThreadInitCallback (cb);*/
+			createFactory (out pUnk);
+			var factory = (IProvingenFactory)Marshal.GetObjectForIUnknown (pUnk);
 			return factory;
 		}
 
-		static readonly Lazy<IProvingenFactory> _factory = new Lazy<IProvingenFactory>(Init);
+		static readonly Lazy<IProvingenFactory> _factory = new Lazy<IProvingenFactory> (Init);
 
-		public static IHttpServer CreateServer(IRequestHandler handlerFactory)
+		public static IHttpServer CreateServer (IRequestHandler handlerFactory)
 		{
 			return _factory.Value.CreateServer (handlerFactory);
 
