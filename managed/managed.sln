@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prowingen", "Prowingen\Prowingen.csproj", "{BE690061-2830-4BA8-B373-1765FD39EA1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.csproj", "{28D8AE5A-73EE-495D-949D-16BB9867A877}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{28D8AE5A-73EE-495D-949D-16BB9867A877}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28D8AE5A-73EE-495D-949D-16BB9867A877}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28D8AE5A-73EE-495D-949D-16BB9867A877}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28D8AE5A-73EE-495D-949D-16BB9867A877}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE690061-2830-4BA8-B373-1765FD39EA1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE690061-2830-4BA8-B373-1765FD39EA1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE690061-2830-4BA8-B373-1765FD39EA1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE690061-2830-4BA8-B373-1765FD39EA1D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Sandbox\Sandbox.csproj
+	EndGlobalSection
+EndGlobal
