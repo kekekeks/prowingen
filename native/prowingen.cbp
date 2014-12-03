@@ -11,6 +11,9 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
+				<Option parameters="/home/kekekeks/Projects/prowingen/managed/Sandbox/bin/Debug/Sandbox.exe" />
+				<Option host_application="/usr/bin/mono" />
+				<Option run_host_application_in_terminal="1" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
@@ -43,12 +46,22 @@
 			<Add directory="../proxygen/proxygen/fbthrift/thrift/folly" />
 			<Add directory="../proxygen/proxygen/fbthrift" />
 		</Compiler>
+		<Linker>
+			<Add option="-pthread" />
+			<Add option="-L../proxygen/proxygen/fbthrift/thrift/folly/folly/.libs/" />
+			<Add option="-L../proxygen/proxygen/httpserver/.libs/" />
+			<Add option="-lproxygenhttpserver" />
+			<Add option="-lfolly" />
+			<Add option="-Wl,--rpath=\\$$$ORIGIN" />
+		</Linker>
 		<Unit filename="iid.cpp" />
 		<Unit filename="include/HttpServerWrapper.h" />
 		<Unit filename="include/api.h" />
 		<Unit filename="include/com.h" />
+		<Unit filename="include/common.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/HttpServerWrapper.cpp" />
+		<Unit filename="src/RequestHandlerWrapper.cpp" />
 		<Extensions>
 			<envvars />
 			<code_completion />

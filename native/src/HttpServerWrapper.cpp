@@ -6,71 +6,21 @@ using namespace proxygen;
 using namespace folly;
 using Protocol = HTTPServer::Protocol;
 
-class RequestHandlerWrapper : public RequestHandler
-{
-    std::unique_ptr<folly::IOBuf> _body;
-    IRequestHandler*_handler;
-
-public:
-    RequestHandlerWrapper(IRequestHandler*handler)
-    {
-        _handler = handler;
-        _handler->AddRef();
-
-    }
-    ~RequestHandlerWrapper()
-    {
-        _handler->Release();
-
-    }
-
-    void onRequest(std::unique_ptr<HTTPMessage> headers) noexcept override {
-
-    }
-
-    void onBody(std::unique_ptr<folly::IOBuf> body) noexcept override {
-        if (_body) {
-            _body->prependChain(std::move(body));
-        } else {
-            _body = std::move(body);
-        }
-    }
-
-    void onEOM() noexcept {
-        ResponseBuilder(downstream_)
-            .status(200, "OK")
-            .header("Request-Number", "123")
-            .body(std::move(_body))
-            .sendWithEOM();
-    }
-
-    void onUpgrade(UpgradeProtocol protocol) noexcept
-    {
-    }
-    void requestComplete() noexcept {
-        delete this;
-    }
-    void onError(ProxygenError err) noexcept {
-        delete this;
-    }
-
-
-};
 
 
 class RequestHandlerFactoryWrapper : public RequestHandlerFactory
 {
 private:
-    IRequestHandlerFactory* _factory;
+    IRequestHandler* _handler;
 public:
-    RequestHandlerFactoryWrapper(IRequestHandlerFactory* factory)
+    RequestHandlerFactoryWrapper(IRequestHandler* handler)
     {
-        _factory = factory;
-        _factory->AddRef();
+        _handler = handler;
+
     }
     ~RequestHandlerFactoryWrapper()
     {
-        _factory->Release();
+        _handler->Release();
 
     }
 
@@ -79,24 +29,19 @@ public:
     void onServerStop() noexcept override {
     }
     RequestHandler* onRequest(RequestHandler*, HTTPMessage*) noexcept override {
-        IRequestHandler* handler;
-        if(0 == _factory->CreateHandler(&handler))
-        {
-            RequestHandler* wrapper = new RequestHandlerWrapper(handler);
-            handler->Release();
-            return wrapper;
-        }
+        return CreateHandler(_handler);
         return 0;
     }
 };
 
 
-HttpServerWrapper::HttpServerWrapper(IRequestHandlerFactory*factory)
+HttpServerWrapper::HttpServerWrapper(IRequestHandler*handler)
 {
     HTTPServerOptions options;
     options.idleTimeout = std::chrono::milliseconds(60000);
+    options.threads = 8;
     options.handlerFactories = RequestHandlerChain()
-        .addThen(std::unique_ptr<RequestHandlerFactory>(new RequestHandlerFactoryWrapper(factory)))
+        .addThen(std::unique_ptr<RequestHandlerFactory>(new RequestHandlerFactoryWrapper(handler)))
         .build();
     _server = new HTTPServer(std::move(options));
 }

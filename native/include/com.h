@@ -83,4 +83,50 @@ public:
     }
 };
 
+template<class TInterface>
+class ComPtr
+{
+private:
+    TInterface* _obj;
+public:
+    ComPtr(TInterface* pObj)
+    {
+        _obj = 0;
+
+        if (pObj)
+        {
+            _obj = pObj;
+            _obj->AddRef();
+        }
+    }
+
+    ~ComPtr()
+    {
+        if (_obj)
+        {
+            _obj->Release();
+            _obj = 0;
+        }
+    }
+
+public:
+    operator TInterface*() const
+    {
+        return _obj;
+    }
+    TInterface& operator*() const
+    {
+        return *_obj;
+    }
+    TInterface** operator&()
+    {
+        return &_obj;
+    }
+    TInterface* operator->() const
+    {
+        return _obj;
+    }
+};
+
+
 #endif // COM_H_INCLUDED
