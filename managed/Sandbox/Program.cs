@@ -16,7 +16,7 @@ namespace Sandbox
 				{
 					resp.SetCode (200, "OK");
 					resp.AppendHeader ("Content-Type", "text/plain");
-					resp.AppendBody (Encoding.UTF8.GetBytes ("Hello world!\n"));
+					resp.AppendBody (Encoding.UTF8.GetBytes (req.PathAndQuery + "\n"));
 					resp.Complete ();
 				}
 			});

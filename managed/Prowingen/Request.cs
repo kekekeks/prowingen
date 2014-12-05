@@ -1,15 +1,32 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Prowingen
 {
-	public class Request : IDisposable
+	public unsafe class Request : IDisposable
 	{
 		static readonly IRequestWrapper Wrapper = Prowingen.Factory.Native.Value.CreateRequestWrapper();
 		IntPtr _native;
+		[StructLayout(LayoutKind.Sequential)]
+		struct RequestInfo
+		{
+			public IntPtr Url;
+		}
+		RequestInfo* _req;
 
-		public Request (IntPtr native)
+		internal Request (IntPtr native)
 		{
 			_native = native;
+			_req = (RequestInfo*)_native;
+		}
+
+		string _pathAndQuery;
+		public string PathAndQuery 
+		{
+			get
+			{
+				return _pathAndQuery = _pathAndQuery ?? Marshal.PtrToStringAnsi (_req->Url);
+			}
 		}
 
 		public void Dispose ()

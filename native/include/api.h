@@ -11,6 +11,11 @@ struct IResponseWrapper : public IUnknown
     virtual HRESULT Complete(proxygen::ResponseBuilder*builder) = 0;
 };
 
+struct RequestInfo
+{
+    const char* Url;
+};
+
 class ReqContext;
 
 struct IRequestWrapper : public IUnknown

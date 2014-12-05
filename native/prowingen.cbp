@@ -62,6 +62,7 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="src/HttpServerWrapper.cpp" />
 		<Unit filename="src/RequestHandlerWrapper.cpp" />
+		<Unit filename="src/RequestWrapper.cpp" />
 		<Extensions>
 			<envvars />
 			<code_completion />

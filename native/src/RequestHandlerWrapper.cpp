@@ -6,20 +6,12 @@ using namespace proxygen;
 using namespace folly;
 
 
-class ReqContext
-{
-    public:
-        std::unique_ptr<folly::IOBuf> _body;
-        ReqContext(std::unique_ptr<folly::IOBuf> body)
-        {
-            _body = std::move(body);
-        }
 
-};
 
 class RequestHandlerWrapper : public RequestHandler
 {
     std::unique_ptr<folly::IOBuf> _body;
+    std::unique_ptr<HTTPMessage> _headers;
     IRequestHandler*_handler;
 
 public:
@@ -39,6 +31,7 @@ public:
 
     void onRequest(std::unique_ptr<HTTPMessage> headers) noexcept override
     {
+        _headers = std::move(headers);
     }
 
     void onBody(std::unique_ptr<folly::IOBuf> body) noexcept override
@@ -52,7 +45,7 @@ public:
 
     void onEOM() noexcept
     {
-        _handler->OnRequest(new ReqContext(std::move(_body)), new ResponseBuilder(downstream_));
+        _handler->OnRequest(new ReqContext(std::move(_body), std::move(_headers)), new ResponseBuilder(downstream_));
     }
 
     void onUpgrade(UpgradeProtocol protocol) noexcept
@@ -105,16 +98,6 @@ public:
 };
 
 
-class RequestWrapper : public ComObject<IRequestWrapper, &IID_IRequestWrapper>
-{
-public:
-    virtual HRESULT Dispose(ReqContext*req)
-    {
-        delete req;
-        return S_OK;
-    }
-};
-
 
 extern RequestHandler* CreateHandler(IRequestHandler*handler)
 {
@@ -126,8 +109,3 @@ extern IResponseWrapper* CreateResponseWrapper()
     return new ResponseWrapper();
 }
 
-extern IRequestWrapper* CreateRequestWrapper()
-{
-    return new RequestWrapper();
-
-}

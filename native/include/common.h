@@ -8,6 +8,14 @@
 #include <proxygen/httpserver/RequestHandlerFactory.h>
 
 
+class ReqContext
+{
+    public:
+        RequestInfo _info;
+        std::unique_ptr<folly::IOBuf> _body;
+        ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> headers);
+};
+
 extern proxygen::RequestHandler* CreateHandler(IRequestHandler*handler);
 extern IResponseWrapper* CreateResponseWrapper();
 extern IRequestWrapper* CreateRequestWrapper();
