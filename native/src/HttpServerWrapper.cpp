@@ -24,7 +24,6 @@ public:
     }
     RequestHandler* onRequest(RequestHandler*, HTTPMessage*) noexcept override {
         return CreateHandler(_handler);
-        return 0;
     }
 };
 
@@ -40,7 +39,7 @@ HttpServerWrapper::HttpServerWrapper(ProwingenRequestHandler handler)
     _server = new HTTPServer(std::move(options));
 }
 
-HRESULT HttpServerWrapper::AddAddress(char*host, int port, bool lookup)
+HRESULT HttpServerWrapper::AddAddress(char*host, uint16_t port, bool lookup)
 {
     std::string shost = std::string(host);
     _ips.push_back(HTTPServer::IPConfig(SocketAddress(shost, port, lookup), Protocol::HTTP));

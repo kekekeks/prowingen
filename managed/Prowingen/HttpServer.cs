@@ -28,7 +28,7 @@ namespace Prowingen
 
 		public void AddAddress (string host, int port, bool resolve)
 		{
-			_server.AddAddress (host, port, resolve);
+			_server.AddAddress (host, (ushort)port, resolve);
 		}
 
 		public void Start()

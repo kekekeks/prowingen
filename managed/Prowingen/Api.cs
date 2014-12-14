@@ -27,7 +27,7 @@ namespace Prowingen
 	interface IHttpServer
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		void AddAddress ([MarshalAs (UnmanagedType.LPStr)]string host, int port, bool resolve);
+		void AddAddress ([MarshalAs (UnmanagedType.LPStr)]string host, ushort port, bool resolve);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void Start();
 	}
@@ -39,7 +39,7 @@ namespace Prowingen
 	interface IResponseWrapper
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		void SetCode(IntPtr r, int code, [MarshalAs (UnmanagedType.LPStr)]string status);
+		void SetCode(IntPtr r, ushort code, [MarshalAs (UnmanagedType.LPStr)]string status);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void AppendHeader(IntPtr r, [MarshalAs (UnmanagedType.LPStr)]string key, [MarshalAs (UnmanagedType.LPStr)]string value);

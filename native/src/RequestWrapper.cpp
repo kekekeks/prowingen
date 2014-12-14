@@ -1,5 +1,4 @@
 #include "common.h"
-#include <proxygen/lib/http/HTTPMessage.h>
 
 ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> headers)
 {

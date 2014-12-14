@@ -14,7 +14,7 @@ namespace Prowingen
 		public void SetCode(int code, string status)
 		{
 			Check ();
-			Wrapper.SetCode (_native, code, status);
+			Wrapper.SetCode (_native, (ushort)code, status);
 		}
 
 		public void AppendHeader(string key, string value)

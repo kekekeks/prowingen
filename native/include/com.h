@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #ifndef COM_H_INCLUDED
 #define COM_H_INCLUDED
 
@@ -19,7 +21,7 @@ typedef DWORD ULONG;
 
 #define S_OK                             0x0L
 
-#define E_NOINTERFACE                    0x80004002L
+#define E_NOINTERFACE                    0x80004002UL
 
 
 typedef struct _IUnknown
@@ -130,3 +132,4 @@ public:
 
 
 #endif // COM_H_INCLUDED
+#pragma clang diagnostic pop

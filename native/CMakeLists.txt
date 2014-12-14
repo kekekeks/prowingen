@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.4)
 project(prowingen)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC -fexceptions -Wall -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC -fexceptions -Wall  -Wno-unknown-pragmas -pthread")
 
 set(SOURCE_FILES
     include/api.h

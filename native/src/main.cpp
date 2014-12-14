@@ -24,9 +24,12 @@ HRESULT ProwingenFactory::CallProxygenThreadInit(void*arg)
 
 extern "C"
 {
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     int CreateFactory(IUnknown**pUnk)
     {
         *pUnk = new ProwingenFactory();
         return 0;
     }
+#pragma clang diagnostic pop
 }

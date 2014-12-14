@@ -1,5 +1,4 @@
 #include "common.h"
-#include <proxygen/httpserver/ResponseBuilder.h>
 
 using namespace proxygen;
 using namespace folly;
@@ -26,7 +25,7 @@ class ResponseWrapper : public ComObject<IResponseWrapper, &IID_IResponseWrapper
 {
 
 public:
-    virtual HRESULT SetCode(RespContext*context, int code, char* status)
+    virtual HRESULT SetCode(RespContext*context, uint16_t code, char* status)
     {
         context->response->status(code, "OK");
         return S_OK;
@@ -39,7 +38,7 @@ public:
 
     virtual HRESULT AppendBody(RespContext*context, void* data, int size, bool flush)
     {
-        auto pBuffer = IOBuf::copyBuffer((char*)data, size).release();
+        auto pBuffer = IOBuf::copyBuffer((char*)data, (size_t)size).release();
         ExecOnEventBase(context->eventBase, [=] ()
         {
             auto buffer = unique_ptr<IOBuf>(pBuffer);

@@ -1,6 +1,4 @@
 #include "common.h"
-#include <proxygen/httpserver/RequestHandlerFactory.h>
-#include <proxygen/httpserver/ResponseBuilder.h>
 
 using namespace proxygen;
 using namespace folly;
