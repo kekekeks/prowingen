@@ -1,21 +1,12 @@
 #include "api.h"
 #include "HttpServerWrapper.h"
 
-
-#ifdef PATCHED_PROXYGEN
 namespace proxygen
 {
-
-
-typedef void (*t_mono_thread_callback)(void*);
-extern void ProxygenSetMonoThreadInitCallback(t_mono_thread_callback cb);
-extern void ProxygenContinueThreadInit(void* arg);
+    typedef void (*HttpThreadProcProto)(folly::EventBase* evBase);
+    extern HttpThreadProcProto HttpThreadProcPtr;
 }
-
 using namespace proxygen;
-
-#endif
-
 
 class ProwingenFactory : public ComObject<IProwingenFactory, &IID_IProwingenFactory>
 {
@@ -37,7 +28,15 @@ class ProwingenFactory : public ComObject<IProwingenFactory, &IID_IProwingenFact
         *ppv=::CreateRequestWrapper();
         return S_OK;
     }
+
+    virtual HRESULT SetProxygenThreadInit(void*newProc, void**oldProc)
+    {
+        *oldProc = (void*)HttpThreadProcPtr;
+        HttpThreadProcPtr = (HttpThreadProcProto)newProc;
+        return S_OK;
+    }
 };
+
 
 
 extern "C"
@@ -47,15 +46,4 @@ extern "C"
         *pUnk = new ProwingenFactory();
         return 0;
     }
-
-#ifdef PATCHED_PROXYGEN
-    void SetThreadInitCallback(t_mono_thread_callback cb)
-    {
-        ProxygenSetMonoThreadInitCallback(cb);
-    }
-    void ContinueThreadInit (void*arg)
-    {
-        ProxygenContinueThreadInit(arg);
-    }
-#endif
 }

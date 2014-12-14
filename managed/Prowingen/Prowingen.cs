@@ -29,8 +29,35 @@ namespace Prowingen
 			IntPtr pUnk;
 			createFactory (out pUnk);
 			var factory = (IProvingenFactory)Marshal.GetObjectForIUnknown (pUnk);
+
+
+			var originalThreadInit = factory.SetThreadInitProc (Marshal.GetFunctionPointerForDelegate (MonoStackFrameDelegate));
+			ProwingenThreadInitDelegate = Marshal.GetDelegateForFunctionPointer<ProwingenThreadInit> (originalThreadInit);
+
 			return factory;
 		}
+
+		delegate void ProwingenThreadInit(IntPtr ptr);
+		static ProwingenThreadInit MonoStackFrameDelegate = MonoStackFrame;
+		static ProwingenThreadInit ProwingenThreadInitDelegate;
+
+		//We need this to prevent GC from finalizing worker threads
+		static void MonoStackFrame(IntPtr arg)
+		{
+			try
+			{
+				System.Threading.Thread.CurrentThread.Name = "proxygen worker thread";
+				ProwingenThreadInitDelegate (arg);
+			}
+			catch(Exception e)
+			{
+				//We've broken proxygen's internal state. Just give up and die.
+				Console.Error.WriteLine (e);
+				System.Diagnostics.Process.GetCurrentProcess ().Kill ();
+			}
+
+		}
+
 
 		internal static readonly Lazy<IProvingenFactory> Native = new Lazy<IProvingenFactory> (Init);
 

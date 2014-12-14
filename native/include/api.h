@@ -42,6 +42,7 @@ struct IProwingenFactory : public IUnknown
     virtual HRESULT CreateServer(IRequestHandler*factory, IHttpServer**ppServer) = 0;
     virtual HRESULT CreateResponseWrapper(IResponseWrapper**ppv) = 0;
     virtual HRESULT CreateRequestWrapper(IRequestWrapper**ppv) = 0;
+    virtual HRESULT SetProxygenThreadInit(void*newProc, void**oldProc) = 0;
 };
 
 

@@ -1,0 +1,33 @@
+diff --git a/proxygen/httpserver/HTTPServer.cpp b/proxygen/httpserver/HTTPServer.cpp
+index 1b8b1bf..846a5f6 100644
+--- a/proxygen/httpserver/HTTPServer.cpp
++++ b/proxygen/httpserver/HTTPServer.cpp
+@@ -60,6 +60,16 @@ void HTTPServer::bind(std::vector<IPConfig>& addrs) {
+   addresses_ = addrs;
+ }
+ 
++
++static void HttpThreadProc(folly::EventBase*eventBase)
++{
++      eventBase->loopForever();
++      eventBase->loop();
++};
++
++typedef void (*HttpThreadProcProto)(folly::EventBase* evBase);
++extern HttpThreadProcProto HttpThreadProcPtr = HttpThreadProc;
++
+ void HTTPServer::start(std::function<void()> onSuccess,
+                        std::function<void(std::exception_ptr)> onError) {
+   // Step 1: Check that server sockets are bound
+@@ -89,10 +99,8 @@ void HTTPServer::start(std::function<void()> onSuccess,
+       handlerThread.eventBase = manager->getEventBase();
+       barrier.wait();
+ 
+-      handlerThread.eventBase->loopForever();
++      HttpThreadProcPtr(handlerThread.eventBase);
+ 
+-      // Call loop() again to drain all the events
+-      handlerThread.eventBase->loop();
+     });
+ 
+     // Wait for eventbase pointer to be set

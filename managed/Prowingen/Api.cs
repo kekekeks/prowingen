@@ -15,6 +15,8 @@ namespace Prowingen
 		IResponseWrapper CreateResponseWrapper ();
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		IRequestWrapper CreateRequestWrapper ();
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		IntPtr SetThreadInitProc (IntPtr newProc);
 	}
 
 
