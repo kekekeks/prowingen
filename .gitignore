@@ -2,6 +2,8 @@
 **/obj
 *.userprefs
 /proxygen
-patchelf
+/patchelf
 *.depend
 prowingen.layout
+.idea
+/build

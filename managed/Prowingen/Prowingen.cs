@@ -15,7 +15,7 @@ namespace Prowingen
 			var path = new[]
 			{
 				"libprowingen.so",
-				"../../../../native/bin/Debug/libprowingen.so",
+				"../../../../native/bin/libprowingen.so",
 				"bin/Debug/libprowingen.so"
 
 			}.Select (Path.GetFullPath).Where (File.Exists).First ();

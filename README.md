@@ -20,9 +20,8 @@ How to compile
 --------------
 
 - Run `./bootstrap.sh` and wait until proxygen installer hangs on its tests, then Ctrl+C
-- Run `./getnative.sh` (it collects .so-files and fixes rpath)
-- Open project from `native` directory in Code::Blocks and compile it
-- Now Sandbox should be runnable from MonoDevelop
+- Run `./buildnative.sh` (it also collects .so-files from proxygen and fixes rpath)
+- Now Sandbox from `managed/managed.sln` should be runnable from MonoDevelop
 
 
 Example
