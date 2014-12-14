@@ -31,15 +31,13 @@ namespace Prowingen
 			var factory = (IProvingenFactory)Marshal.GetObjectForIUnknown (pUnk);
 
 
-			var originalThreadInit = factory.SetThreadInitProc (Marshal.GetFunctionPointerForDelegate (MonoStackFrameDelegate));
-			ProwingenThreadInitDelegate = Marshal.GetDelegateForFunctionPointer<ProwingenThreadInit> (originalThreadInit);
+			factory.SetThreadInitProc (Marshal.GetFunctionPointerForDelegate (MonoStackFrameDelegate));
 
 			return factory;
 		}
 
 		delegate void ProwingenThreadInit(IntPtr ptr);
 		static ProwingenThreadInit MonoStackFrameDelegate = MonoStackFrame;
-		static ProwingenThreadInit ProwingenThreadInitDelegate;
 
 		//We need this to prevent GC from finalizing worker threads
 		static void MonoStackFrame(IntPtr arg)
@@ -47,11 +45,12 @@ namespace Prowingen
 			try
 			{
 				System.Threading.Thread.CurrentThread.Name = "proxygen worker thread";
-				ProwingenThreadInitDelegate (arg);
+				Native.Value.CallThreadInitProc(arg);
 			}
 			catch(Exception e)
 			{
 				//We've broken proxygen's internal state. Just give up and die.
+				Console.Error.WriteLine ("Crash in proxygen thread!");
 				Console.Error.WriteLine (e);
 				System.Diagnostics.Process.GetCurrentProcess ().Kill ();
 			}

@@ -7,11 +7,18 @@ namespace proxygen
 }
 using namespace proxygen;
 
-
-HRESULT ProwingenFactory::SetProxygenThreadInit(void*newProc, void**oldProc)
+static HttpThreadProcProto OriginalThreadProcPtr = 0;
+HRESULT ProwingenFactory::SetProxygenThreadInit(void*newProc)
 {
-    *oldProc = (void*)HttpThreadProcPtr;
+    if(OriginalThreadProcPtr == 0)
+        OriginalThreadProcPtr = HttpThreadProcPtr;
     HttpThreadProcPtr = (HttpThreadProcProto)newProc;
+    return S_OK;
+}
+
+HRESULT ProwingenFactory::CallProxygenThreadInit(void*arg)
+{
+    OriginalThreadProcPtr((folly::EventBase*)arg);
     return S_OK;
 }
 

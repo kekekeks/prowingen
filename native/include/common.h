@@ -30,7 +30,8 @@ public:
     virtual HRESULT CreateServer(IRequestHandler*handler, IHttpServer**ppServer);
     virtual HRESULT CreateResponseWrapper(IResponseWrapper**ppv);
     virtual HRESULT CreateRequestWrapper(IRequestWrapper**ppv);
-    virtual HRESULT SetProxygenThreadInit(void*newProc, void**oldProc);
+    virtual HRESULT SetProxygenThreadInit(void*newProc);
+    virtual HRESULT CallProxygenThreadInit (void*arg);
 };
 
 extern proxygen::RequestHandler* CreateHandler(IRequestHandler*handler);
