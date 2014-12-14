@@ -12,21 +12,12 @@ class RequestHandlerWrapper : public RequestHandler
 {
     std::unique_ptr<folly::IOBuf> _body;
     std::unique_ptr<HTTPMessage> _headers;
-    IRequestHandler*_handler;
+    ProwingenRequestHandler _handler;
 
 public:
-    RequestHandlerWrapper(IRequestHandler*handler)
+    RequestHandlerWrapper(ProwingenRequestHandler handler)
     {
         _handler = handler;
-        if(_handler)
-            _handler->AddRef();
-
-    }
-    ~RequestHandlerWrapper()
-    {
-        if(_handler)
-            _handler->Release();
-
     }
 
     void onRequest(std::unique_ptr<HTTPMessage> headers) noexcept override
@@ -45,7 +36,7 @@ public:
 
     void onEOM() noexcept
     {
-        _handler->OnRequest(new ReqContext(std::move(_body), std::move(_headers)), new RespContext(downstream_));
+        _handler(new ReqContext(std::move(_body), std::move(_headers)), new RespContext(downstream_));
     }
 
     void onUpgrade(UpgradeProtocol protocol) noexcept
@@ -64,7 +55,7 @@ public:
 
 };
 
-extern RequestHandler* CreateHandler(IRequestHandler*handler)
+extern RequestHandler* CreateHandler(ProwingenRequestHandler handler)
 {
     return new RequestHandlerWrapper(handler);
 }

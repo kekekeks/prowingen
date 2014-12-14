@@ -11,19 +11,13 @@ using Protocol = HTTPServer::Protocol;
 class RequestHandlerFactoryWrapper : public RequestHandlerFactory
 {
 private:
-    IRequestHandler* _handler;
+    ProwingenRequestHandler _handler;
 public:
-    RequestHandlerFactoryWrapper(IRequestHandler* handler)
+    RequestHandlerFactoryWrapper(ProwingenRequestHandler handler)
     {
         _handler = handler;
 
     }
-    ~RequestHandlerFactoryWrapper()
-    {
-        _handler->Release();
-
-    }
-
     void onServerStart() noexcept override {
     }
     void onServerStop() noexcept override {
@@ -35,7 +29,7 @@ public:
 };
 
 
-HttpServerWrapper::HttpServerWrapper(IRequestHandler*handler)
+HttpServerWrapper::HttpServerWrapper(ProwingenRequestHandler handler)
 {
     HTTPServerOptions options;
     options.idleTimeout = std::chrono::milliseconds(60000);
@@ -65,7 +59,7 @@ HttpServerWrapper::~HttpServerWrapper()
     delete _server;
 }
 
-HRESULT ProwingenFactory::CreateServer(IRequestHandler*handler, IHttpServer**ppServer)
+HRESULT ProwingenFactory::CreateServer(ProwingenRequestHandler handler, IHttpServer**ppServer)
 {
     *ppServer = new HttpServerWrapper(handler);
     return S_OK;

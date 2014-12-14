@@ -27,12 +27,12 @@ public:
 class ProwingenFactory : public ComObject<IProwingenFactory, &IID_IProwingenFactory>
 {
 public:
-    virtual HRESULT CreateServer(IRequestHandler*handler, IHttpServer**ppServer);
+    virtual HRESULT CreateServer(ProwingenRequestHandler requestHandler, IHttpServer**ppServer);
     virtual HRESULT CreateResponseWrapper(IResponseWrapper**ppv);
     virtual HRESULT CreateRequestWrapper(IRequestWrapper**ppv);
     virtual HRESULT SetProxygenThreadInit(void*newProc);
     virtual HRESULT CallProxygenThreadInit (void*arg);
 };
 
-extern proxygen::RequestHandler* CreateHandler(IRequestHandler*handler);
+extern proxygen::RequestHandler* CreateHandler(ProwingenRequestHandler requestHandler);
 #endif // COMMON_H_INCLUDED

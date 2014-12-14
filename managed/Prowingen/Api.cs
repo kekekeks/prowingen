@@ -10,7 +10,7 @@ namespace Prowingen
 	interface IProvingenFactory
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		IHttpServer CreateServer (IRequestHandler factory);
+		IHttpServer CreateServer (IntPtr factory);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		IResponseWrapper CreateResponseWrapper ();
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
@@ -24,7 +24,7 @@ namespace Prowingen
 
 	[ComImport, ComVisible (true), InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("918cfa9b-a766-41e7-9c4b-330954d01b47")]
-	public interface IHttpServer
+	interface IHttpServer
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void AddAddress ([MarshalAs (UnmanagedType.LPStr)]string host, int port, bool resolve);
@@ -32,12 +32,7 @@ namespace Prowingen
 		void Start();
 	}
 		
-	[ComImport, ComVisible (true), InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
-	[Guid("6307a020-22f4-462f-aee0-15e7bc555c4d")]
-	interface IRequestHandler
-	{
-		void OnRequest (IntPtr request, IntPtr response);
-	}
+	delegate void RequestHandlerDelegate(IntPtr request, IntPtr response);
 
 	[ComImport, ComVisible (true), InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("24e1a430-27f6-4fd4-a0a4-95e9dea8d51a")]

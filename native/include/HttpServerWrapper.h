@@ -5,7 +5,7 @@
 class HttpServerWrapper : public ComObject<IHttpServer, &IID_IHttpServer>
 {
     public:
-        HttpServerWrapper(IRequestHandler*handler);
+        HttpServerWrapper(ProwingenRequestHandler handler);
         virtual ~HttpServerWrapper();
         virtual HRESULT AddAddress(char*host, int port, bool lookup) override;
         virtual HRESULT Start() override;

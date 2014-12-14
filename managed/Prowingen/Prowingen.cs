@@ -60,23 +60,11 @@ namespace Prowingen
 
 		internal static readonly Lazy<IProvingenFactory> Native = new Lazy<IProvingenFactory> (Init);
 
-		class RequestHandler : IRequestHandler
-		{
-			readonly Action<Request, Response> _cb;
-			public RequestHandler (Action<Request, Response> cb)
-			{
-				_cb = cb;
-			}
 
-			public void OnRequest(IntPtr pRequest, IntPtr pResponse)
-			{
-				_cb (new Request (pRequest), new Response (pResponse));
-			}
-		}
 
-		public static IHttpServer CreateServer (Action<Request, Response> cb)
+		public static HttpServer CreateServer (Action<Request, Response> cb)
 		{
-			return Native.Value.CreateServer (new RequestHandler (cb));
+			return new HttpServer (cb);
 		}
 	}
 }

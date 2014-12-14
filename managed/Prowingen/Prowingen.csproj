@@ -39,6 +39,7 @@
     <Compile Include="LinuxLoader.cs" />
     <Compile Include="Response.cs" />
     <Compile Include="Request.cs" />
+    <Compile Include="HttpServer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
