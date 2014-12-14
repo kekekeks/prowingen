@@ -3,12 +3,15 @@
 #include "com.h"
 #include <proxygen/httpserver/ResponseBuilder.h>
 
+class ReqContext;
+class RespContext;
+
 struct IResponseWrapper : public IUnknown
 {
-    virtual HRESULT SetCode(proxygen::ResponseBuilder*builder, int code, char* status) = 0;
-    virtual HRESULT AppendHeader(proxygen::ResponseBuilder*builder, char* key, char* value) = 0;
-    virtual HRESULT AppendBody(proxygen::ResponseBuilder*builder, void* data, int size, bool flush) = 0;
-    virtual HRESULT Complete(proxygen::ResponseBuilder*builder) = 0;
+    virtual HRESULT SetCode(RespContext*builder, int code, char* status) = 0;
+    virtual HRESULT AppendHeader(RespContext*builder, char* key, char* value) = 0;
+    virtual HRESULT AppendBody(RespContext*builder, void* data, int size, bool flush) = 0;
+    virtual HRESULT Complete(RespContext*builder) = 0;
 };
 
 struct RequestInfo
@@ -16,7 +19,7 @@ struct RequestInfo
     const char* Url;
 };
 
-class ReqContext;
+
 
 struct IRequestWrapper : public IUnknown
 {

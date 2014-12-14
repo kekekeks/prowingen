@@ -64,3 +64,9 @@ HttpServerWrapper::~HttpServerWrapper()
 {
     delete _server;
 }
+
+HRESULT ProwingenFactory::CreateServer(IRequestHandler*handler, IHttpServer**ppServer)
+{
+    *ppServer = new HttpServerWrapper(handler);
+    return S_OK;
+}

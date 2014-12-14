@@ -8,8 +8,19 @@ using namespace folly;
 RespContext::RespContext(proxygen::ResponseHandler*responseHandler)
 {
     response = make_unique<ResponseBuilder>(responseHandler);
+    eventBase = folly::EventBaseManager::get()->getExistingEventBase();
 }
 
+
+static void ExecOnEventBase(folly::EventBase*base, folly::Cob cb)
+{
+    auto currentEventBase = folly::EventBaseManager::get()->getExistingEventBase();
+    if(currentEventBase != base)
+        base->runInEventBaseThread(cb);
+    else
+        cb();
+
+}
 
 class ResponseWrapper : public ComObject<IResponseWrapper, &IID_IResponseWrapper>
 {
@@ -28,16 +39,24 @@ public:
 
     virtual HRESULT AppendBody(RespContext*context, void* data, int size, bool flush)
     {
-        context->response->body(IOBuf::copyBuffer((char*)data, size));
-        if(flush)
-            context->response->send();
+        auto pBuffer = IOBuf::copyBuffer((char*)data, size).release();
+        ExecOnEventBase(context->eventBase, [=] ()
+        {
+            auto buffer = unique_ptr<IOBuf>(pBuffer);
+            context->response->body(std::move(buffer));
+            if(flush)
+                context->response->send();
+        });
         return S_OK;
     }
 
     virtual HRESULT Complete(RespContext*context)
     {
-        context->response->sendWithEOM();
-        delete context;
+        ExecOnEventBase(context->eventBase, [=] ()
+        {
+            context->response->sendWithEOM();
+            delete context;
+        });
         return S_OK;
     }
 };

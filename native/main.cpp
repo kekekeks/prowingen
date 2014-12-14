@@ -1,5 +1,4 @@
-#include "api.h"
-#include "HttpServerWrapper.h"
+#include "common.h"
 
 namespace proxygen
 {
@@ -8,36 +7,13 @@ namespace proxygen
 }
 using namespace proxygen;
 
-class ProwingenFactory : public ComObject<IProwingenFactory, &IID_IProwingenFactory>
+
+HRESULT ProwingenFactory::SetProxygenThreadInit(void*newProc, void**oldProc)
 {
-    virtual HRESULT CreateServer(IRequestHandler*handler, IHttpServer**ppServer)
-    {
-        *ppServer = new HttpServerWrapper(handler);
-        return S_OK;
-    }
-
-    virtual HRESULT CreateResponseWrapper(IResponseWrapper**ppv)
-    {
-        *ppv=::CreateResponseWrapper();
-        return S_OK;
-    }
-
-
-    virtual HRESULT CreateRequestWrapper(IRequestWrapper**ppv)
-    {
-        *ppv=::CreateRequestWrapper();
-        return S_OK;
-    }
-
-    virtual HRESULT SetProxygenThreadInit(void*newProc, void**oldProc)
-    {
-        *oldProc = (void*)HttpThreadProcPtr;
-        HttpThreadProcPtr = (HttpThreadProcProto)newProc;
-        return S_OK;
-    }
-};
-
-
+    *oldProc = (void*)HttpThreadProcPtr;
+    HttpThreadProcPtr = (HttpThreadProcProto)newProc;
+    return S_OK;
+}
 
 extern "C"
 {

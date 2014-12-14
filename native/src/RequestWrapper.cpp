@@ -17,8 +17,9 @@ public:
     }
 };
 
-extern IRequestWrapper* CreateRequestWrapper()
-{
-    return new RequestWrapper();
 
+HRESULT ProwingenFactory::CreateRequestWrapper(IRequestWrapper**ppv)
+{
+    *ppv=new RequestWrapper();
+    return S_OK;
 }

@@ -16,7 +16,22 @@ class ReqContext
         ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> headers);
 };
 
+class RespContext
+{
+public:
+    std::unique_ptr<proxygen::ResponseBuilder> response;
+    folly::EventBase*eventBase;
+    RespContext(proxygen::ResponseHandler*responseHandler);
+};
+
+class ProwingenFactory : public ComObject<IProwingenFactory, &IID_IProwingenFactory>
+{
+public:
+    virtual HRESULT CreateServer(IRequestHandler*handler, IHttpServer**ppServer);
+    virtual HRESULT CreateResponseWrapper(IResponseWrapper**ppv);
+    virtual HRESULT CreateRequestWrapper(IRequestWrapper**ppv);
+    virtual HRESULT SetProxygenThreadInit(void*newProc, void**oldProc);
+};
+
 extern proxygen::RequestHandler* CreateHandler(IRequestHandler*handler);
-extern IResponseWrapper* CreateResponseWrapper();
-extern IRequestWrapper* CreateRequestWrapper();
 #endif // COMMON_H_INCLUDED

@@ -45,7 +45,7 @@ public:
 
     void onEOM() noexcept
     {
-        _handler->OnRequest(new ReqContext(std::move(_body), std::move(_headers)), new ResponseBuilder(downstream_));
+        _handler->OnRequest(new ReqContext(std::move(_body), std::move(_headers)), new RespContext(downstream_));
     }
 
     void onUpgrade(UpgradeProtocol protocol) noexcept
@@ -64,48 +64,9 @@ public:
 
 };
 
-
-
-class ResponseWrapper : public ComObject<IResponseWrapper, &IID_IResponseWrapper>
-{
-
-public:
-    virtual HRESULT SetCode(proxygen::ResponseBuilder*builder, int code, char* status)
-    {
-        builder->status(code, "OK");
-        return S_OK;
-    }
-    virtual HRESULT AppendHeader(proxygen::ResponseBuilder*builder, char* key, char* value)
-    {
-        builder->header(key, value);
-        return S_OK;
-    }
-
-    virtual HRESULT AppendBody(proxygen::ResponseBuilder*builder, void* data, int size, bool flush)
-    {
-        builder->body(IOBuf::copyBuffer((char*)data, size));
-        if(flush)
-            builder->send();
-        return S_OK;
-    }
-
-    virtual HRESULT Complete(proxygen::ResponseBuilder*builder)
-    {
-        builder->sendWithEOM();
-        delete builder;
-        return S_OK;
-    }
-};
-
-
-
 extern RequestHandler* CreateHandler(IRequestHandler*handler)
 {
     return new RequestHandlerWrapper(handler);
 }
 
-extern IResponseWrapper* CreateResponseWrapper()
-{
-    return new ResponseWrapper();
-}
 
