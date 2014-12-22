@@ -24,12 +24,12 @@ namespace Prowingen
 
 	[ComImport, ComVisible (true), InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid("918cfa9b-a766-41e7-9c4b-330954d01b47")]
-	interface IHttpServer
+	unsafe interface IHttpServer
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void AddAddress ([MarshalAs (UnmanagedType.LPStr)]string host, ushort port, bool resolve);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		void Start();
+		void Start (void* charBuffer);
 	}
 		
 	delegate void RequestHandlerDelegate(IntPtr request, IntPtr response);

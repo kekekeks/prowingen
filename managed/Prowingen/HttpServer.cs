@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace Prowingen
 {
@@ -31,9 +32,19 @@ namespace Prowingen
 			_server.AddAddress (host, (ushort)port, resolve);
 		}
 
-		public void Start()
+		public unsafe void Start()
 		{
-			_server.Start ();
+			fixed(byte* pByte = new byte[1024])
+			{
+				pByte [0] = 0;
+				try
+				{
+					_server.Start (pByte);
+				} catch
+				{
+					throw new Win32Exception (Marshal.PtrToStringAnsi (new IntPtr(pByte)));
+				}
+			}
 		}
 	}
 }

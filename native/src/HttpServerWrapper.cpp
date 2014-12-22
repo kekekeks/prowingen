@@ -46,11 +46,23 @@ HRESULT HttpServerWrapper::AddAddress(char*host, uint16_t port, bool lookup)
     return S_OK;
 }
 
-HRESULT HttpServerWrapper::Start()
+HRESULT HttpServerWrapper::Start(char*exceptionBuffer)
 {
-    _server->bind(_ips);
-    _server->start();
-    return S_OK;
+    try {
+        _server->bind(_ips);
+        _server->start();
+        return S_OK;
+    }
+    catch (const std::exception& ex)
+    {
+        strcpy(exceptionBuffer, ex.what());
+        return E_FAIL;
+    }
+    catch(...)
+    {
+        strcpy(exceptionBuffer, "Unknown failure");
+        return  E_FAIL;
+    }
 }
 
 HttpServerWrapper::~HttpServerWrapper()

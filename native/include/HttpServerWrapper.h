@@ -8,7 +8,7 @@ class HttpServerWrapper : public ComObject<IHttpServer, &IID_IHttpServer>
         HttpServerWrapper(ProwingenRequestHandler handler);
         virtual ~HttpServerWrapper();
         virtual HRESULT AddAddress(char*host, uint16_t port, bool lookup) override;
-        virtual HRESULT Start() override;
+        virtual HRESULT Start(char* exceptionBuffer) override;
     protected:
     private:
         proxygen::HTTPServer* _server;

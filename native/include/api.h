@@ -31,7 +31,7 @@ struct IRequestWrapper : public IUnknown
 struct IHttpServer : public IUnknown
 {
     virtual HRESULT AddAddress(char*host, uint16_t port, bool lookup) = 0;
-    virtual HRESULT Start() = 0;
+    virtual HRESULT Start(char* exceptionBuffer) = 0;
 
 };
 

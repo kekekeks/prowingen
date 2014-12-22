@@ -22,6 +22,7 @@ typedef DWORD ULONG;
 #define S_OK                             0x0L
 
 #define E_NOINTERFACE                    0x80004002UL
+#define E_FAIL                           0x80004005L
 
 
 typedef struct _IUnknown
