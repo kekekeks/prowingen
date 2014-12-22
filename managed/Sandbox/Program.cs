@@ -1,9 +1,10 @@
-﻿using System;
+﻿using System; 
 using Prowingen;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Linq;
+using System.IO;
 
 namespace Sandbox
 {
@@ -12,11 +13,11 @@ namespace Sandbox
 		static void Handler(Request req, Response resp)
 		{
 			using (req)
+			using(var writer = new StreamWriter(resp.OutputStream))
 			{
 				resp.SetCode (200, "OK");
 				resp.AppendHeader ("Content-Type", "text/plain");
-				resp.AppendBody (Encoding.UTF8.GetBytes (req.PathAndQuery + "\n"));
-				resp.Complete ();
+				writer.WriteLine (req.PathAndQuery);
 			}
 		}
 

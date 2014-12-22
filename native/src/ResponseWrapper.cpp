@@ -38,11 +38,15 @@ public:
 
     virtual HRESULT AppendBody(RespContext*context, void* data, int size, bool flush)
     {
-        auto pBuffer = IOBuf::copyBuffer((char*)data, (size_t)size).release();
+        IOBuf* pBuffer = NULL;
+        if(data != NULL && size != 0)
+            pBuffer = IOBuf::copyBuffer((char*)data, (size_t)size).release();
         ExecOnEventBase(context->eventBase, [=] ()
         {
-            auto buffer = unique_ptr<IOBuf>(pBuffer);
-            context->response->body(std::move(buffer));
+            if(pBuffer != NULL) {
+                auto buffer = unique_ptr<IOBuf>(pBuffer);
+                context->response->body(std::move(buffer));
+            }
             if(flush)
                 context->response->send();
         });
