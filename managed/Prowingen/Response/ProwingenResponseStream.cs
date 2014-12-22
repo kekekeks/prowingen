@@ -12,11 +12,10 @@ namespace Prowingen
 		{
 			_parent = parent;
 		}
-
-		static byte[] empty;
+			
 		public override void Flush ()
 		{
-			_parent.AppendBody (empty, 0, 0, true);
+			_parent.AppendBody (null, 0, 0, true);
 		}
 
 		public override void Write (byte[] buffer, int offset, int count)

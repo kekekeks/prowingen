@@ -66,6 +66,12 @@ namespace Prowingen
 		internal void AppendBody(byte[] data, int offset, int size, bool flush = false)
 		{
 			OnWrite ();
+			if(data == null || size == 0)
+			{
+				if (flush)
+					Wrapper.AppendBody (_native, IntPtr.Zero, 0, true);
+				return;
+			}
 			fixed(byte* sptr = data)
 			{
 				byte* ptr = sptr;
