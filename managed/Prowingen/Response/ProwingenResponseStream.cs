@@ -20,7 +20,7 @@ namespace Prowingen
 
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			if (offset < 0 || offset + count >= buffer.Length)
+			if (offset < 0 || offset + count > buffer.Length)
 				throw new IndexOutOfRangeException ();
 			_parent.AppendBody (buffer, offset, count);
 		}
