@@ -31,11 +31,11 @@ Example
 static void Handler(Request req, Response resp)
 {
 	using (req)
+	using(var writer = new StreamWriter(resp.OutputStream))
 	{
-		resp.SetCode (200, "OK");
-		resp.AppendHeader ("Content-Type", "text/plain");
-		resp.AppendBody (Encoding.UTF8.GetBytes (req.PathAndQuery + "\n"));
-		resp.Complete ();
+		resp.StatusCode = System.Net.HttpStatusCode.OK;
+		resp.Headers.Add ("Content-Type", "text/plain");
+		writer.WriteLine (req.PathAndQuery);
 	}
 }
 

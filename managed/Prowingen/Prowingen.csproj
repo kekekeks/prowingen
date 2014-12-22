@@ -40,6 +40,11 @@
     <Compile Include="Response.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="HttpServer.cs" />
+    <Compile Include="Response\ProwingenResponseStream.cs" />
+    <Compile Include="Response\ProwingenResponseHeaders.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Response\" />
+  </ItemGroup>
 </Project>

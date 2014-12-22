@@ -15,8 +15,8 @@ namespace Sandbox
 			using (req)
 			using(var writer = new StreamWriter(resp.OutputStream))
 			{
-				resp.SetCode (200, "OK");
-				resp.AppendHeader ("Content-Type", "text/plain");
+				resp.StatusCode = System.Net.HttpStatusCode.OK;
+				resp.Headers.Add ("Content-Type", "text/plain");
 				writer.WriteLine (req.PathAndQuery);
 			}
 		}
