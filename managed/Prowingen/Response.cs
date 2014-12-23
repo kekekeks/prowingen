@@ -88,9 +88,11 @@ namespace Prowingen
 
 		internal void Complete()
 		{
-			OnWrite ();
 			if (_native != IntPtr.Zero)
+			{
+				OnWrite ();
 				Wrapper.Complete (_native);
+			}
 			_native = IntPtr.Zero;
 		}
 

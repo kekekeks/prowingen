@@ -8,6 +8,8 @@
     <RootNamespace>Prowingen</RootNamespace>
     <AssemblyName>Prowingen</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\prowingen.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,10 +45,12 @@
     <Compile Include="Response\ProwingenResponseStream.cs" />
     <Compile Include="Response\ProwingenResponseHeaders.cs" />
     <Compile Include="Request\ProwingenRequestStream.cs" />
+    <Compile Include="Owin\ProwingenOwinServer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Response\" />
     <Folder Include="Request\" />
+    <Folder Include="Owin\" />
   </ItemGroup>
 </Project>

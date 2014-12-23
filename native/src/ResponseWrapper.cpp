@@ -27,7 +27,7 @@ class ResponseWrapper : public ComObject<IResponseWrapper, &IID_IResponseWrapper
 public:
     virtual HRESULT SetCode(RespContext*context, uint16_t code, char* status)
     {
-        context->response->status(code, "OK");
+        context->response->status(code, status);
         return S_OK;
     }
     virtual HRESULT AppendHeader(RespContext*context, char* key, char* value)
