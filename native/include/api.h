@@ -27,6 +27,9 @@ struct RequestInfo
     const char* Url;
     uint64_t bufferCount;
     IOBufInfo*buffers;
+    const char* Method;
+    uint64_t HttpVersion;
+    int IsSecure;
 };
 
 typedef void (*ProwingenRequestHandler)(void*,void*);

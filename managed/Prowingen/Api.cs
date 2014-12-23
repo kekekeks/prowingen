@@ -72,6 +72,9 @@ namespace Prowingen
 		public IntPtr Url;
 		public long BufferCount;
 		public IoBufInfo* Buffers;
+		public IntPtr Method;
+		public uint HttpVersion;
+		public int IsSecure;
 	}
 
 }

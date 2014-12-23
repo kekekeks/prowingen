@@ -43,7 +43,7 @@ namespace Prowingen
 		{
 			Check ();
 			bool headersWereSent = HeadersAreSent;
-			HeadersAreSent = true;
+
 			if (!headersWereSent)
 			{
 				if(SendingHeaders != null)
@@ -53,7 +53,9 @@ namespace Prowingen
 				foreach (var hdr in Headers.Dictionary)
 					foreach (var hdrdata in hdr.Value)
 						Wrapper.AppendHeader (_native, hdr.Key, hdrdata);
+				HeadersAreSent = true;
 			}
+
 		}
 
 		internal void OnHeader()

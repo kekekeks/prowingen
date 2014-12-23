@@ -44,19 +44,21 @@ namespace Prowingen.Owin
 						var env = new Dictionary<string, object> ();
 						var reqHeaders = new Dictionary<string, string[]> ();
 						env ["owin.RequestBody"] = req.RequestStream;
-						env ["owin.RequestHeaders"] = reqHeaders;//TODO: actual request headers
-						env ["owin.RequestMethod"] = "GET"; //TODO: actual request method
+						env ["owin.RequestHeaders"] = reqHeaders;
+						env ["owin.RequestMethod"] = req.Method;
 
+
+						//TODO: actual request headers
 						reqHeaders.Add("Host",new[]{ "localhost:9002"});
 
 						var pairs = req.PathAndQuery.Split (new[] { '?' }, 2);
 						var path = Uri.UnescapeDataString (pairs [0]);
 						var query = pairs.Length == 2 ? pairs [1] : string.Empty;
 						env ["owin.RequestPath"] = path;
-						env ["owin.RequestPathBase"] = "/";
-						env ["owin.RequestProtocol"] = "HTTP/1.0";
+						env ["owin.RequestPathBase"] = "";
+						env ["owin.RequestProtocol"] = req.Protocol;
 						env ["owin.RequestQueryString"] = query;
-						env ["owin.RequestScheme"] = "http"; //TODO: support for HTTPS/SPDY schemes
+						env ["owin.RequestScheme"] = req.IsSecure ? "https" : "http";
 
 
 						var responseHeaders = new Dictionary<string, string[]> ();
@@ -70,6 +72,8 @@ namespace Prowingen.Owin
 
 						sendingHeaders = delegate
 						{
+							foreach(var cb in headerCallbacks)
+								cb.Item1(cb.Item2);
 							resp.StatusCode = (System.Net.HttpStatusCode)(int)env ["owin.ResponseStatusCode"];
 							foreach (var hdr in responseHeaders)
 								resp.Headers.Add (hdr.Key, hdr.Value);
@@ -77,6 +81,7 @@ namespace Prowingen.Owin
 						resp.SendingHeaders += sendingHeaders;
 						await _app (env);
 						resp.OutputStream.Close ();
+
 					} catch (Exception e)
 					{
 						resp.SendingHeaders -= sendingHeaders;

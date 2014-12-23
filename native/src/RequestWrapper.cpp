@@ -4,7 +4,8 @@
 ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> headers)
 {
     _body = std::move(body);
-    _info.Url = headers->getURL().c_str();
+    _headers = std::move(headers);
+    _info.Url = _headers->getURL().c_str();
 
     folly::IOBuf* pBody = _body.get();
     auto buffer = pBody;
@@ -21,6 +22,11 @@ ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxy
     }
     _info.bufferCount=_buffers.size();
     _info.buffers = _buffers.data();
+    auto ver = _headers->getHTTPVersion();
+    _info.HttpVersion = (ver.first<<16) + ver.second;
+    _info.Method = _headers->getMethodString().c_str();
+    _info.IsSecure = _headers->isSecure();
+
 }
 
 class RequestWrapper : public ComObject<IRequestWrapper, &IID_IRequestWrapper>

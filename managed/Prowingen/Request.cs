@@ -11,15 +11,49 @@ namespace Prowingen
 
 		RequestInfo* _req;
 
-		public string PathAndQuery { get; private set; }
+		string _pathAndQuery;
+		public string PathAndQuery
+		{
+			get
+			{
+				CheckDisposed ();
+				return _pathAndQuery ?? (_pathAndQuery = Marshal.PtrToStringAnsi (_req->Url));
+			}
+		}
+
+		string _method;
+		public string Method
+		{
+			get
+			{
+				CheckDisposed ();
+				return _method ?? (_method = Marshal.PtrToStringAnsi (_req->Method));
+			}
+		}
+
+		string _protocol;
+		public string Protocol
+		{
+			get
+			{
+				CheckDisposed ();
+				if (_protocol != null)
+					return _protocol;
+				var major = (_req->HttpVersion & 0xFFFF0000u) >> 16;
+				var minor = (_req->HttpVersion & 0xFFFFu);
+				return _protocol = "HTTP/" + major + "." + minor;
+			}
+		}
+
+		public bool IsSecure {get; private set;}
 		public Stream RequestStream { get; private set;}
 
 		internal Request (IntPtr native)
 		{
 			_native = native;
 			_req = (RequestInfo*)_native;
-			PathAndQuery = Marshal.PtrToStringAnsi (_req->Url);
 			RequestStream = new ProwingenRequestStream (this, _req);
+			IsSecure = _req->IsSecure != 0;
 		}
 
 

@@ -10,7 +10,7 @@ namespace WebApiSandbox
 		[HttpGet, Route("")]
 		public object HelloWorld()
 		{
-			return new HttpResponseMessage{ Content = new StringContent ("Hello world!") };
+			return new HttpResponseMessage{ Content = new StringContent (Request.Method.ToString () + " " + Request.RequestUri.ToString ()) };
 		}
 
 	}
