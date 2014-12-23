@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Prowingen
 {
@@ -7,27 +8,21 @@ namespace Prowingen
 	{
 		static readonly IRequestWrapper Wrapper = Prowingen.Factory.Native.Value.CreateRequestWrapper();
 		IntPtr _native;
-		[StructLayout(LayoutKind.Sequential)]
-		struct RequestInfo
-		{
-			public IntPtr Url;
-		}
+
 		RequestInfo* _req;
+
+		public string PathAndQuery { get; private set; }
+		public Stream RequestStream { get; private set;}
 
 		internal Request (IntPtr native)
 		{
 			_native = native;
 			_req = (RequestInfo*)_native;
+			PathAndQuery = Marshal.PtrToStringAnsi (_req->Url);
+			RequestStream = new ProwingenRequestStream (this, _req);
 		}
 
-		string _pathAndQuery;
-		public string PathAndQuery 
-		{
-			get
-			{
-				return _pathAndQuery = _pathAndQuery ?? Marshal.PtrToStringAnsi (_req->Url);
-			}
-		}
+
 
 		public void Dispose ()
 		{
@@ -36,6 +31,12 @@ namespace Prowingen
 				Wrapper.Dispose (_native);
 				_native = IntPtr.Zero;
 			}
+		}
+
+		internal void CheckDisposed()
+		{
+			if (_native == IntPtr.Zero)
+				throw new ObjectDisposedException (this.GetType ().Name);
 		}
 	}
 }

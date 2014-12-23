@@ -38,7 +38,7 @@ public:
 
     virtual HRESULT AppendBody(RespContext*context, void* data, int size, bool flush)
     {
-        IOBuf* pBuffer = NULL;
+        IOBuf* pBuffer = 0;
         if(data != NULL && size != 0)
             pBuffer = IOBuf::copyBuffer((char*)data, (size_t)size).release();
         ExecOnEventBase(context->eventBase, [=] ()

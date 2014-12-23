@@ -16,9 +16,17 @@ struct IResponseWrapper : public IUnknown
     virtual HRESULT Complete(RespContext*builder) = 0;
 };
 
+struct IOBufInfo
+{
+    const void*data;
+    uint64_t size;
+};
+
 struct RequestInfo
 {
     const char* Url;
+    uint64_t bufferCount;
+    IOBufInfo*buffers;
 };
 
 typedef void (*ProwingenRequestHandler)(void*,void*);

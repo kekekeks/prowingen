@@ -59,4 +59,19 @@ namespace Prowingen
 		void Dispose (IntPtr p);
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
+	unsafe struct IoBufInfo
+	{
+		public byte* Data;
+		public ulong Size;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	unsafe struct RequestInfo
+	{
+		public IntPtr Url;
+		public long BufferCount;
+		public IoBufInfo* Buffers;
+	}
+
 }

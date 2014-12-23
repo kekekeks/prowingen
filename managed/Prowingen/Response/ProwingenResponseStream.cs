@@ -22,6 +22,10 @@ namespace Prowingen
 		{
 			if (offset < 0 || offset + count > buffer.Length)
 				throw new IndexOutOfRangeException ();
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+			if (count == 0)
+				return;
 			_parent.AppendBody (buffer, offset, count);
 		}
 
