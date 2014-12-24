@@ -67,14 +67,23 @@ namespace Prowingen
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
+	struct HttpHeader
+	{
+		public IntPtr Key;
+		public IntPtr Value;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
 	unsafe struct RequestInfo
 	{
 		public IntPtr Url;
 		public long BufferCount;
 		public IoBufInfo* Buffers;
 		public IntPtr Method;
-		public uint HttpVersion;
+		public ulong HttpVersion;
 		public int IsSecure;
+		public long HeaderCount;
+		public HttpHeader* Headers;
 	}
 
 }

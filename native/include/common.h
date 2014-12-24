@@ -13,9 +13,10 @@ class ReqContext
     public:
         RequestInfo _info;
         std::unique_ptr<folly::IOBuf> _body;
-        std::unique_ptr<proxygen::HTTPMessage> _headers;
+        std::unique_ptr<proxygen::HTTPMessage> _message;
         std::vector<IOBufInfo> _buffers;
-        ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> headers);
+        std::vector<HttpHeader> _headers;
+        ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> message);
 };
 
 class RespContext

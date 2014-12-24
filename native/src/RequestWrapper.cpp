@@ -1,11 +1,11 @@
 #include <dejagnu.h>
 #include "common.h"
 
-ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> headers)
+ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> message)
 {
     _body = std::move(body);
-    _headers = std::move(headers);
-    _info.Url = _headers->getURL().c_str();
+    _message = std::move(message);
+    _info.Url = _message->getURL().c_str();
 
     folly::IOBuf* pBody = _body.get();
     auto buffer = pBody;
@@ -22,11 +22,20 @@ ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxy
     }
     _info.bufferCount=_buffers.size();
     _info.buffers = _buffers.data();
-    auto ver = _headers->getHTTPVersion();
+    auto ver = _message->getHTTPVersion();
     _info.HttpVersion = (ver.first<<16) + ver.second;
-    _info.Method = _headers->getMethodString().c_str();
-    _info.IsSecure = _headers->isSecure();
+    _info.Method = _message->getMethodString().c_str();
+    _info.IsSecure = _message->isSecure();
 
+    auto headers = _message->getHeaders();
+    HttpHeader header;
+    headers.forEach([&](const std::string& key, const std::string &value){
+        header.Key = key.c_str();
+        header.Value = value.c_str();
+        _headers.push_back(header);
+    });
+    _info.HeaderCount = _headers.size();
+    _info.Headers = _headers.data();
 }
 
 class RequestWrapper : public ComObject<IRequestWrapper, &IID_IRequestWrapper>

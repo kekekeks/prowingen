@@ -32,54 +32,50 @@ namespace Prowingen.Owin
 
 		void OnRequest (Request req, Response resp)
 		{
-
+			var owin = new Dictionary<string, object> ();
 			ThreadPool.QueueUserWorkItem (async _ =>
 			{
+
 				using (req)
 				using (resp.OutputStream)
 				{
 					EventHandler sendingHeaders = null;
 					try
 					{
-						var env = new Dictionary<string, object> ();
-						var reqHeaders = new Dictionary<string, string[]> ();
-						env ["owin.RequestBody"] = req.RequestStream;
-						env ["owin.RequestHeaders"] = reqHeaders;
-						env ["owin.RequestMethod"] = req.Method;
 
-
-						//TODO: actual request headers
-						reqHeaders.Add("Host",new[]{ "localhost:9002"});
+						owin ["owin.RequestBody"] = req.RequestStream;
+						owin ["owin.RequestHeaders"] = req.Headers;
+						owin ["owin.RequestMethod"] = req.Method;
 
 						var pairs = req.PathAndQuery.Split (new[] { '?' }, 2);
 						var path = Uri.UnescapeDataString (pairs [0]);
 						var query = pairs.Length == 2 ? pairs [1] : string.Empty;
-						env ["owin.RequestPath"] = path;
-						env ["owin.RequestPathBase"] = "";
-						env ["owin.RequestProtocol"] = req.Protocol;
-						env ["owin.RequestQueryString"] = query;
-						env ["owin.RequestScheme"] = req.IsSecure ? "https" : "http";
+						owin ["owin.RequestPath"] = path;
+						owin ["owin.RequestPathBase"] = "";
+						owin ["owin.RequestProtocol"] = req.Protocol;
+						owin ["owin.RequestQueryString"] = query;
+						owin ["owin.RequestScheme"] = req.IsSecure ? "https" : "http";
 
 
 						var responseHeaders = new Dictionary<string, string[]> ();
-						env ["owin.ResponseBody"] = resp.OutputStream;
-						env ["owin.ResponseHeaders"] = responseHeaders;
-						env ["owin.ResponseStatusCode"] = 200;
+						owin ["owin.ResponseBody"] = resp.OutputStream;
+						owin ["owin.ResponseHeaders"] = responseHeaders;
+						owin ["owin.ResponseStatusCode"] = 200;
 
 						var headerCallbacks = new List<Tuple<Action<object>, object>> ();
-						env ["server.OnSendingHeaders"] = new Action<Action<object>, object> ((cb, state) => headerCallbacks.Add (Tuple.Create (cb, state)));
+						owin ["server.OnSendingHeaders"] = new Action<Action<object>, object> ((cb, state) => headerCallbacks.Add (Tuple.Create (cb, state)));
 
 
 						sendingHeaders = delegate
 						{
 							foreach(var cb in headerCallbacks)
 								cb.Item1(cb.Item2);
-							resp.StatusCode = (System.Net.HttpStatusCode)(int)env ["owin.ResponseStatusCode"];
+							resp.StatusCode = (System.Net.HttpStatusCode)(int)owin ["owin.ResponseStatusCode"];
 							foreach (var hdr in responseHeaders)
 								resp.Headers.Add (hdr.Key, hdr.Value);
 						};
 						resp.SendingHeaders += sendingHeaders;
-						await _app (env);
+						await _app (owin);
 						resp.OutputStream.Close ();
 
 					} catch (Exception e)

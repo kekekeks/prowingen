@@ -22,6 +22,12 @@ struct IOBufInfo
     uint64_t size;
 };
 
+struct HttpHeader
+{
+    const char* Key;
+    const char* Value;
+};
+
 struct RequestInfo
 {
     const char* Url;
@@ -30,6 +36,8 @@ struct RequestInfo
     const char* Method;
     uint64_t HttpVersion;
     int IsSecure;
+    uint64_t HeaderCount;
+    HttpHeader*Headers;
 };
 
 typedef void (*ProwingenRequestHandler)(void*,void*);
