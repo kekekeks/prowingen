@@ -7,6 +7,8 @@ namespace Prowingen
 	class ProwingenResponseStream : Stream
 	{
 		Response _parent;
+		byte[] _buffer = BufferManager.GetBuffer();
+		int _bufferPosition;
 
 		public ProwingenResponseStream (Response parent)
 		{
@@ -15,10 +17,41 @@ namespace Prowingen
 			
 		public override void Flush ()
 		{
-			_parent.AppendBody (null, 0, 0, true);
+			if(_bufferPosition!=0)
+			{
+				WriteInternal (_buffer, 0, _bufferPosition);
+				_bufferPosition = 0;
+			}
 		}
 
 		public override void Write (byte[] buffer, int offset, int count)
+		{
+			if (count > _buffer.Length)
+			{
+				Flush ();
+				WriteInternal (buffer, offset, count);
+			}
+			else
+			{
+				if (_bufferPosition + count > _buffer.Length)
+				{
+					var toWrite = _bufferPosition + count - _buffer.Length;
+					Buffer.BlockCopy (buffer, offset, _buffer, _bufferPosition, toWrite);
+					Flush ();
+					offset += toWrite;
+					count -= toWrite;
+				}
+
+
+				Buffer.BlockCopy (buffer, offset, _buffer, _bufferPosition, count);
+				_bufferPosition += count;
+
+
+			}
+		}
+
+
+		void WriteInternal(byte[] buffer, int offset, int count)
 		{
 			if (offset < 0 || offset + count > buffer.Length)
 				throw new IndexOutOfRangeException ();
@@ -26,25 +59,24 @@ namespace Prowingen
 				throw new ArgumentOutOfRangeException ("count");
 			if (count == 0)
 				return;
-			_parent.AppendBody (buffer, offset, count);
+			_parent.AppendBody (buffer, offset, count, true);
 		}
 
 		protected override void Dispose (bool disposing)
 		{
+			if (_buffer != null)
+			{
+				if (_bufferPosition == 0)
+					_parent.Complete (null, 0, 0);
+				else
+					_parent.Complete (_buffer, 0, _bufferPosition);
+				BufferManager.ReleaseBuffer (_buffer);
+			}
+
 			base.Dispose (disposing);
-			_parent.Complete ();
 		}
 
 		#region Async
-		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-		{
-			Write (buffer, offset, count);
-			var tcs = new TaskCompletionSource<int> (state);
-			tcs.SetResult (0);
-
-			callback (tcs.Task);
-			return tcs.Task;
-		}
 
 		public override System.Threading.Tasks.Task FlushAsync (System.Threading.CancellationToken cancellationToken)
 		{

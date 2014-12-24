@@ -46,6 +46,7 @@
     <Compile Include="Response\ProwingenResponseHeaders.cs" />
     <Compile Include="Request\ProwingenRequestStream.cs" />
     <Compile Include="Owin\ProwingenOwinServer.cs" />
+    <Compile Include="BufferManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

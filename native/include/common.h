@@ -7,6 +7,8 @@
 #include <proxygen/httpserver/HTTPServer.h>
 #include <proxygen/httpserver/RequestHandlerFactory.h>
 
+extern std::string HttpStatusCodes[];
+extern void InitStatusCodes();
 
 class ReqContext
 {
@@ -22,6 +24,8 @@ class ReqContext
 class RespContext
 {
 public:
+    ResponseInfo _info;
+    bool _headersSent;
     std::unique_ptr<proxygen::ResponseBuilder> response;
     folly::EventBase*eventBase;
     RespContext(proxygen::ResponseHandler*responseHandler);

@@ -9,6 +9,7 @@ namespace Prowingen
 	{
 		static readonly IResponseWrapper Wrapper = Prowingen.Factory.Native.Value.CreateResponseWrapper();
 		IntPtr _native;
+		ResponseInfo* _resp;
 
 		public event EventHandler SendingHeaders;
 		public Stream OutputStream { get; private set;}
@@ -27,14 +28,16 @@ namespace Prowingen
 				if (v > 0x7fff || v < 0)
 					throw new ArgumentException ("Invalid HTTP status code");
 				_statusCode = value;
+				//_resp->Code = (ushort)v;
 			}
 		}
 
 		internal Response(IntPtr native)
 		{
 			_native = native;
+			_resp = (ResponseInfo*)native;
 			StatusCode = HttpStatusCode.OK;
-			OutputStream = new BufferedStream (new ProwingenResponseStream (this), 0x4000);
+			OutputStream = new ProwingenResponseStream (this);
 			Headers = new ProwingenResponseHeaders (this);
 		}
 
@@ -57,7 +60,6 @@ namespace Prowingen
 				if(SendingHeaders != null)
 					SendingHeaders (this, new EventArgs ());
 
-				Wrapper.SetCode (_native, (ushort)StatusCode, StatusCodes [(int)StatusCode]);
 				foreach (var hdr in Headers.Dictionary)
 					foreach (var hdrdata in hdr.Value)
 						Wrapper.AppendHeader (_native, hdr.Key, hdrdata);
@@ -96,12 +98,22 @@ namespace Prowingen
 				throw new ObjectDisposedException ("Request is already completed");
 		}
 
-		internal void Complete()
+		internal void Complete(byte[] data, int offset, int size)
 		{
 			if (_native != IntPtr.Zero)
 			{
 				OnWrite ();
-				Wrapper.Complete (_native);
+				if (data == null)
+					Wrapper.Complete (_native, IntPtr.Zero, 0);
+				else
+				{
+					fixed(byte* sptr = data)
+					{
+						byte* ptr = sptr;
+						ptr += offset;
+						Wrapper.Complete (_native, new IntPtr ((void*)ptr), size);
+					}
+				}
 			}
 			_native = IntPtr.Zero;
 		}

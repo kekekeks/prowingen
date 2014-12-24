@@ -41,16 +41,13 @@ namespace Prowingen
 	interface IResponseWrapper
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		void SetCode(IntPtr r, ushort code, [MarshalAs (UnmanagedType.LPStr)]string status);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void AppendHeader(IntPtr r, [MarshalAs (UnmanagedType.LPStr)]string key, [MarshalAs (UnmanagedType.LPStr)]string value);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void AppendBody(IntPtr r, IntPtr data, int size, bool flush);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		void Complete(IntPtr r);
+		void Complete(IntPtr r, IntPtr data, int size);
 	}
 
 	[ComImport, ComVisible (true), InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
@@ -86,6 +83,14 @@ namespace Prowingen
 		public int IsSecure;
 		public long HeaderCount;
 		public HttpHeader* Headers;
+	}
+
+
+	[StructLayout(LayoutKind.Sequential)]
+	unsafe struct ResponseInfo
+	{
+		public ushort Code;
+
 	}
 
 }

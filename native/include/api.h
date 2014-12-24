@@ -10,10 +10,9 @@ class RespContext;
 
 struct IResponseWrapper : public IUnknown
 {
-    virtual HRESULT SetCode(RespContext*builder, uint16_t code, char* status) = 0;
     virtual HRESULT AppendHeader(RespContext*builder, char* key, char* value) = 0;
     virtual HRESULT AppendBody(RespContext*builder, void* data, int size, bool flush) = 0;
-    virtual HRESULT Complete(RespContext*builder) = 0;
+    virtual HRESULT Complete(RespContext*builder, void* data, int size) = 0;
 };
 
 struct IOBufInfo
@@ -38,6 +37,11 @@ struct RequestInfo
     int IsSecure;
     uint64_t HeaderCount;
     HttpHeader*Headers;
+};
+
+struct ResponseInfo
+{
+    ushort StatusCode;
 };
 
 typedef void (*ProwingenRequestHandler)(void*,void*);

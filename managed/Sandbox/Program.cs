@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Linq;
 using System.IO;
+using System.Diagnostics;
+using System.Net;
 
 namespace Sandbox
 {
@@ -13,11 +15,12 @@ namespace Sandbox
 		static void Handler(Request req, Response resp)
 		{
 			using (req)
-			using(var writer = new StreamWriter(resp.OutputStream))
+			using(resp.OutputStream)
 			{
 				resp.StatusCode = System.Net.HttpStatusCode.OK;
-				resp.Headers.Add ("Content-Type", "text/plain");
-				writer.WriteLine (req.PathAndQuery);
+				//resp.Headers.Add ("Content-Type", "text/plain");
+				var buf = Encoding.UTF8.GetBytes (req.PathAndQuery);
+				resp.OutputStream.Write (buf, 0, buf.Length);
 			}
 		}
 
@@ -42,8 +45,10 @@ namespace Sandbox
 					}).Start ();
 				server.AddAddress ("127.0.0.1", 9001, false);
 				server.Start ();
-				Console.WriteLine ("Started on 127.0.0.1:9001");
-				Console.ReadLine ();
+				//Console.WriteLine ("Started on 127.0.0.1:9001");
+				//Console.ReadLine ();
+				Process.Start (new ProcessStartInfo ("wrk", "-c 800 -d 5s -t 10 http://localhost:9001"){ UseShellExecute = false }).WaitForExit ();
+				//Console.WriteLine (new WebClient ().DownloadString ("http://localhost:9001/lalala"));
 			}
 			Console.WriteLine ("Stopped");
 		}

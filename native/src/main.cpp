@@ -35,6 +35,7 @@ extern "C"
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     int CreateFactory(IUnknown**pUnk)
     {
+        InitStatusCodes();
         on_exit(&exit_handler, NULL);
         *pUnk = new ProwingenFactory();
         return 0;

@@ -13,7 +13,8 @@ set(SOURCE_FILES
     src/main.cpp
     src/RequestHandlerWrapper.cpp
     src/RequestWrapper.cpp
-    src/ResponseWrapper.cpp)
+    src/ResponseWrapper.cpp
+    src/StatusCodes.cpp)
 
 include_directories(include ../proxygen/proxygen/fbthrift/thrift/folly ../proxygen/proxygen/fbthrift ../proxygen)
 
