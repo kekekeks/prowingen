@@ -80,7 +80,7 @@ namespace Prowingen
 			return Task.FromResult (Read (buffer, offset, count));
 		}
 
-		public override void Close ()
+		protected override void Dispose(bool disposing)
 		{
 			_parent.Dispose ();
 		}

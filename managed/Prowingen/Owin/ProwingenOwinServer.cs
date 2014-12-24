@@ -32,10 +32,10 @@ namespace Prowingen.Owin
 
 		void OnRequest (Request req, Response resp)
 		{
-			var owin = new Dictionary<string, object> ();
+
 			ThreadPool.QueueUserWorkItem (async _ =>
 			{
-
+				var owin = new Dictionary<string, object> ();
 				using (req)
 				using (resp.OutputStream)
 				{

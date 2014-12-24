@@ -34,7 +34,7 @@ namespace Prowingen
 		{
 			_native = native;
 			StatusCode = HttpStatusCode.OK;
-			OutputStream = new ProwingenResponseStream (this);
+			OutputStream = new BufferedStream (new ProwingenResponseStream (this), 0x4000);
 			Headers = new ProwingenResponseHeaders (this);
 		}
 
