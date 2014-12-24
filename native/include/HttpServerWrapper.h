@@ -9,10 +9,12 @@ class HttpServerWrapper : public ComObject<IHttpServer, &IID_IHttpServer>
         virtual ~HttpServerWrapper();
         virtual HRESULT AddAddress(char*host, uint16_t port, bool lookup) override;
         virtual HRESULT Start(char* exceptionBuffer) override;
+        virtual HRESULT Stop() override;
     protected:
     private:
         proxygen::HTTPServer* _server;
         std::vector<proxygen::HTTPServer::IPConfig> _ips;
+        ProwingenRequestHandler _handler;
 };
 
 

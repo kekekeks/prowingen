@@ -27,7 +27,7 @@ namespace Prowingen.Owin
 
 		public void Dispose ()
 		{
-			//TODO: Stop
+			_httpServer.Dispose ();
 		}
 
 		void OnRequest (Request req, Response resp)

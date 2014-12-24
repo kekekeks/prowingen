@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace Prowingen
 {
-	public class HttpServer
+	public class HttpServer : IDisposable
 	{
 		#pragma warning disable 0414
 		private GCHandle _httpCallbackHandle;
@@ -46,6 +46,15 @@ namespace Prowingen
 				}
 			}
 		}
+
+		public void Dispose()
+		{
+			if (_server == null)
+				return;
+			_server.Stop ();
+			_server = null;
+		}
+
 	}
 }
 

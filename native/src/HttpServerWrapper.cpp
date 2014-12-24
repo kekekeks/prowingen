@@ -30,13 +30,8 @@ public:
 
 HttpServerWrapper::HttpServerWrapper(ProwingenRequestHandler handler)
 {
-    HTTPServerOptions options;
-    options.idleTimeout = std::chrono::milliseconds(60000);
-    options.threads = 8;
-    options.handlerFactories = RequestHandlerChain()
-        .addThen(std::unique_ptr<RequestHandlerFactory>(new RequestHandlerFactoryWrapper(handler)))
-        .build();
-    _server = new HTTPServer(std::move(options));
+    _server = NULL;
+    _handler = handler;
 }
 
 HRESULT HttpServerWrapper::AddAddress(char*host, uint16_t port, bool lookup)
@@ -48,9 +43,16 @@ HRESULT HttpServerWrapper::AddAddress(char*host, uint16_t port, bool lookup)
 
 HRESULT HttpServerWrapper::Start(char*exceptionBuffer)
 {
+    HTTPServerOptions options;
+    options.idleTimeout = std::chrono::milliseconds(60000);
+    options.threads = 8;
+    options.handlerFactories = RequestHandlerChain()
+        .addThen(std::unique_ptr<RequestHandlerFactory>(new RequestHandlerFactoryWrapper(_handler)))
+        .build();
+    _server = new HTTPServer(std::move(options));
     try {
         _server->bind(_ips);
-        _server->start();
+        std::thread([=](){_server->start();}).detach();
         return S_OK;
     }
     catch (const std::exception& ex)
@@ -67,11 +69,18 @@ HRESULT HttpServerWrapper::Start(char*exceptionBuffer)
 
 HttpServerWrapper::~HttpServerWrapper()
 {
-    delete _server;
+    if(_server != NULL)
+        delete _server;
 }
 
 HRESULT ProwingenFactory::CreateServer(ProwingenRequestHandler handler, IHttpServer**ppServer)
 {
     *ppServer = new HttpServerWrapper(handler);
+    return S_OK;
+}
+
+HRESULT HttpServerWrapper::Stop() {
+    if(_server != NULL)
+        _server->stop();
     return S_OK;
 }

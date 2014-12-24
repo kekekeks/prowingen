@@ -1,5 +1,5 @@
 #include "common.h"
-
+#include <unistd.h>
 namespace proxygen
 {
     typedef void (*HttpThreadProcProto)(folly::EventBase* evBase);
@@ -22,12 +22,20 @@ HRESULT ProwingenFactory::CallProxygenThreadInit(void*arg)
     return S_OK;
 }
 
+
+
+static void exit_handler (int code, void*)
+{
+    _exit(code);
+}
+
 extern "C"
 {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     int CreateFactory(IUnknown**pUnk)
     {
+        on_exit(&exit_handler, NULL);
         *pUnk = new ProwingenFactory();
         return 0;
     }

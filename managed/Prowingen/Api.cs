@@ -30,6 +30,8 @@ namespace Prowingen
 		void AddAddress ([MarshalAs (UnmanagedType.LPStr)]string host, ushort port, bool resolve);
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void Start (void* charBuffer);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		void Stop ();
 	}
 		
 	delegate void RequestHandlerDelegate(IntPtr request, IntPtr response);
