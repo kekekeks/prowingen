@@ -38,6 +38,14 @@ namespace Prowingen
 			Headers = new ProwingenResponseHeaders (this);
 		}
 
+		static string[] StatusCodes = new string[0xffff];
+
+		static Response()
+		{
+			var statusCodes = (int[])Enum.GetValues (typeof(HttpStatusCode));
+			foreach (var code in statusCodes)
+				StatusCodes [code] = ((HttpStatusCode)code).ToString ();
+		}
 
 		void OnWrite()
 		{
@@ -49,7 +57,7 @@ namespace Prowingen
 				if(SendingHeaders != null)
 					SendingHeaders (this, new EventArgs ());
 
-				Wrapper.SetCode (_native, (ushort)StatusCode, StatusCode.ToString ());
+				Wrapper.SetCode (_native, (ushort)StatusCode, StatusCodes [(int)StatusCode]);
 				foreach (var hdr in Headers.Dictionary)
 					foreach (var hdrdata in hdr.Value)
 						Wrapper.AppendHeader (_native, hdr.Key, hdrdata);
