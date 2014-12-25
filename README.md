@@ -24,10 +24,9 @@ The plan
 How to compile
 --------------
 
-- Run `./bootstrap.sh` and wait until proxygen installer hangs on its tests, then Ctrl+C
+- Run `./bootstrap.sh`
 - Run `./buildnative.sh` (it also collects .so-files from proxygen and fixes rpath)
-- Now Sandbox from `managed/managed.sln` should be runnable from MonoDevelop
-
+- Run `xbuild` in `managed` or just open `managed.sln` in MonoDevelop
 
 Examples
 -------
