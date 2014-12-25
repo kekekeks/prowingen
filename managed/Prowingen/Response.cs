@@ -41,15 +41,6 @@ namespace Prowingen
 			Headers = new ProwingenResponseHeaders (this);
 		}
 
-		static string[] StatusCodes = new string[0xffff];
-
-		static Response()
-		{
-			var statusCodes = (int[])Enum.GetValues (typeof(HttpStatusCode));
-			foreach (var code in statusCodes)
-				StatusCodes [code] = ((HttpStatusCode)code).ToString ();
-		}
-
 		void OnWrite()
 		{
 			Check ();
