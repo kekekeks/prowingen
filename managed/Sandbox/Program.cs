@@ -47,8 +47,9 @@ namespace Sandbox
 				server.Start ();
 				//Console.WriteLine ("Started on 127.0.0.1:9001");
 				//Console.ReadLine ();
+				Console.WriteLine (new WebClient ().DownloadString ("http://localhost:9001/lalala"));
 				Process.Start (new ProcessStartInfo ("wrk", "-c 800 -d 5s -t 10 http://localhost:9001"){ UseShellExecute = false }).WaitForExit ();
-				//Console.WriteLine (new WebClient ().DownloadString ("http://localhost:9001/lalala"));
+
 			}
 			Console.WriteLine ("Stopped");
 		}

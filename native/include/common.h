@@ -25,7 +25,7 @@ class RespContext
 {
 public:
     ResponseInfo _info;
-    bool _headersSent;
+    bool _beforeHeadersSucceded;
     std::unique_ptr<proxygen::ResponseBuilder> response;
     folly::EventBase*eventBase;
     RespContext(proxygen::ResponseHandler*responseHandler);
@@ -41,4 +41,9 @@ public:
 };
 
 extern proxygen::RequestHandler* CreateHandler(ProwingenRequestHandler requestHandler);
+struct EventBaseHolder
+{
+    folly::EventBase* EventBase;
+};
+extern folly::ThreadLocalPtr<EventBaseHolder> ThreadEventBase;
 #endif // COMMON_H_INCLUDED

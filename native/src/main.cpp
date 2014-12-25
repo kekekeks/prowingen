@@ -16,9 +16,16 @@ HRESULT ProwingenFactory::SetProxygenThreadInit(void*newProc)
     return S_OK;
 }
 
+folly::ThreadLocalPtr<EventBaseHolder> ThreadEventBase;
 HRESULT ProwingenFactory::CallProxygenThreadInit(void*arg)
 {
-    OriginalThreadProcPtr((folly::EventBase*)arg);
+    auto ev =(folly::EventBase*)arg;
+    auto holder = ThreadEventBase.get();
+    if(holder == nullptr)
+        ThreadEventBase.reset(holder = new EventBaseHolder());
+    holder->EventBase = ev;
+    OriginalThreadProcPtr(ev);
+    holder->EventBase = nullptr;
     return S_OK;
 }
 
