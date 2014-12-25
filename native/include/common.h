@@ -35,10 +35,9 @@ class ProwingenFactory : public ComObject<IProwingenFactory, &IID_IProwingenFact
 {
 public:
     virtual HRESULT CreateServer(ProwingenRequestHandler requestHandler, IHttpServer**ppServer);
-    virtual HRESULT CreateResponseWrapper(IResponseWrapper**ppv);
-    virtual HRESULT CreateRequestWrapper(IRequestWrapper**ppv);
     virtual HRESULT SetProxygenThreadInit(void*newProc);
     virtual HRESULT CallProxygenThreadInit (void*arg);
+    virtual HRESULT GetMethodTablePtr(void***pTable);
 };
 
 extern proxygen::RequestHandler* CreateHandler(ProwingenRequestHandler requestHandler);

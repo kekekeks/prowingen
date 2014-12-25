@@ -7,7 +7,7 @@ namespace Prowingen
 {
 	public unsafe class Request : IDisposable
 	{
-		static readonly IRequestWrapper Wrapper = Prowingen.Factory.Native.Value.CreateRequestWrapper();
+		static readonly Wrappers Wrapper = Prowingen.Factory.Wrappers.Value;
 		IntPtr _native;
 
 		RequestInfo* _req;
@@ -103,7 +103,7 @@ namespace Prowingen
 		{
 			if (_native != IntPtr.Zero)
 			{
-				Wrapper.Dispose (_native);
+				Wrapper.DisposeRequest (_native);
 				_native = IntPtr.Zero;
 			}
 		}

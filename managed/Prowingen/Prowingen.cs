@@ -3,6 +3,7 @@ using System.Linq;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 namespace Prowingen
 {
@@ -10,7 +11,7 @@ namespace Prowingen
 	{
 		delegate void CreateFactoryProc (out IntPtr pUnk);
 
-		static IProvingenFactory Init ()
+		unsafe static IProvingenFactory Init ()
 		{
 			var path = new[]
 			{
@@ -32,7 +33,6 @@ namespace Prowingen
 
 
 			factory.SetThreadInitProc (Marshal.GetFunctionPointerForDelegate (MonoStackFrameDelegate));
-
 			return factory;
 		}
 
@@ -60,6 +60,21 @@ namespace Prowingen
 
 		internal static readonly Lazy<IProvingenFactory> Native = new Lazy<IProvingenFactory> (Init);
 
+		unsafe static Wrappers GetMethodTable()
+		{
+			var mtable = Native.Value.GetMethodTablePtr ();
+			var wrappers = new Wrappers ();
+			var fields = typeof(Wrappers).GetFields ();
+			for (var c = 0; c < fields.Length; c++)
+			{
+				var mptr = mtable [c];
+				var del = Marshal.GetDelegateForFunctionPointer (mptr, fields [c].FieldType);
+				fields [c].SetValue (wrappers, del);
+			}
+			return wrappers;
+		}
+
+		internal static readonly Lazy<Wrappers> Wrappers = new Lazy<Wrappers>(GetMethodTable);
 
 
 		public static HttpServer CreateServer (Action<Request, Response> cb)

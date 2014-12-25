@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.4)
 project(prowingen)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC -fexceptions -Wall  -Wno-unknown-pragmas -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -std=c++11 -fPIC -fexceptions -Wall  -Wno-unknown-pragmas -pthread")
 
 set(SOURCE_FILES
     include/api.h
@@ -14,7 +14,8 @@ set(SOURCE_FILES
     src/RequestHandlerWrapper.cpp
     src/RequestWrapper.cpp
     src/ResponseWrapper.cpp
-    src/StatusCodes.cpp)
+    src/StatusCodes.cpp
+    src/MethodTable.cpp)
 
 include_directories(include ../proxygen/proxygen/fbthrift/thrift/folly ../proxygen/proxygen/fbthrift ../proxygen)
 

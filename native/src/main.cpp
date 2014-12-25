@@ -33,7 +33,7 @@ extern "C"
 {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-    int CreateFactory(IUnknown**pUnk)
+    __attribute__ ((visibility ("default"))) int CreateFactory(IUnknown**pUnk)
     {
         InitStatusCodes();
         on_exit(&exit_handler, NULL);

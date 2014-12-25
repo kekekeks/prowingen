@@ -38,19 +38,6 @@ ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxy
     _info.Headers = _headers.data();
 }
 
-class RequestWrapper : public ComObject<IRequestWrapper, &IID_IRequestWrapper>
-{
-public:
-    virtual HRESULT Dispose(ReqContext*req)
-    {
-        delete req;
-        return S_OK;
-    }
-};
-
-
-HRESULT ProwingenFactory::CreateRequestWrapper(IRequestWrapper**ppv)
-{
-    *ppv=new RequestWrapper();
-    return S_OK;
+extern void ApiDisposeRequest(ReqContext*req) {
+    delete req;
 }

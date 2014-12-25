@@ -7,7 +7,7 @@ namespace Prowingen
 {
 	public unsafe class Response
 	{
-		static readonly IResponseWrapper Wrapper = Prowingen.Factory.Native.Value.CreateResponseWrapper();
+		static readonly Wrappers Wrapper = Prowingen.Factory.Wrappers.Value;
 		IntPtr _native;
 		ResponseInfo* _resp;
 

@@ -8,12 +8,7 @@
 class ReqContext;
 class RespContext;
 
-struct IResponseWrapper : public IUnknown
-{
-    virtual HRESULT AppendHeader(RespContext*builder, char* key, char* value) = 0;
-    virtual HRESULT AppendBody(RespContext*builder, void* data, int size, bool flush) = 0;
-    virtual HRESULT Complete(RespContext*builder, void* data, int size) = 0;
-};
+
 
 struct IOBufInfo
 {
@@ -46,10 +41,7 @@ struct ResponseInfo
 
 typedef void (*ProwingenRequestHandler)(void*,void*);
 
-struct IRequestWrapper : public IUnknown
-{
-    virtual HRESULT Dispose(ReqContext*ctx) = 0;
-};
+
 
 struct IHttpServer : public IUnknown
 {
@@ -64,18 +56,21 @@ struct IHttpServer : public IUnknown
 struct IProwingenFactory : public IUnknown
 {
     virtual HRESULT CreateServer(ProwingenRequestHandler requestHandler, IHttpServer**ppServer) = 0;
-    virtual HRESULT CreateResponseWrapper(IResponseWrapper**ppv) = 0;
-    virtual HRESULT CreateRequestWrapper(IRequestWrapper**ppv) = 0;
     virtual HRESULT SetProxygenThreadInit(void*newProc) = 0;
     virtual HRESULT CallProxygenThreadInit(void*arg) = 0;
+    virtual HRESULT GetMethodTablePtr(void***pTable) = 0;
 };
 
 
 
+extern void ApiDisposeRequest(ReqContext*ctx);
+extern void ApiAppendHeader(RespContext*builder, char* key, char* value);
+extern void ApiAppendBody(RespContext*builder, void* data, int size, bool flush);
+extern void ApiCompleteResponse(RespContext*builder, void* data, int size);
+
+
 extern const GUID IID_IHttpServer;
 extern const GUID IID_IProwingenFactory;
-extern const GUID IID_IRequestWrapper;
-extern const GUID IID_IResponseWrapper;
 
 #endif // API_H_INCLUDED
 
