@@ -3,7 +3,7 @@
 #ifndef API_H_INCLUDED
 #define API_H_INCLUDED
 #include "com.h"
-#include <proxygen/httpserver/ResponseBuilder.h>
+#include "CustomResponseBuilder.h"
 
 class ReqContext;
 class RespContext;
@@ -32,6 +32,8 @@ struct RequestInfo
     int IsSecure;
     uint64_t HeaderCount;
     HttpHeader*Headers;
+    int IsUpgradable;
+
 };
 
 struct ResponseInfo
@@ -67,6 +69,7 @@ extern void ApiDisposeRequest(ReqContext*ctx);
 extern void ApiAppendHeader(RespContext*builder, char* key, char* value);
 extern void ApiAppendBody(RespContext*builder, void* data, int size, bool flush);
 extern void ApiCompleteResponse(RespContext*builder, void* data, int size);
+extern void ApiUpgradeResponse(RespContext*context);
 
 
 extern const GUID IID_IHttpServer;

@@ -34,7 +34,7 @@ namespace Prowingen
 		
 	delegate void RequestHandlerDelegate(IntPtr request, IntPtr response);
 
-
+	#pragma warning disable 649
 	class Wrappers
 	{
 		public delegate void DisposeDelegate (IntPtr p);
@@ -45,6 +45,8 @@ namespace Prowingen
 		public AppendBodyDelegate AppendBody;
 		public delegate void CompleteDelegate(IntPtr r, IntPtr data, int size);
 		public CompleteDelegate Complete;
+		public delegate void UpgradeDelegate(IntPtr r);
+		public UpgradeDelegate Upgrade;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -72,6 +74,7 @@ namespace Prowingen
 		public int IsSecure;
 		public long HeaderCount;
 		public HttpHeader* Headers;
+		public int IsUpgradable;
 	}
 
 

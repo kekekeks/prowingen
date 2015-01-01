@@ -55,21 +55,33 @@
     <Reference Include="Microsoft.Owin.Host.HttpListener">
       <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.2.0.2\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin.WebSocket">
+      <HintPath>..\packages\Owin.WebSocket.1.2.0\lib\net45\Owin.WebSocket.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="SocketHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="web\ws.html" />
+    <None Include="web\jquery-2.1.3.min.js" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Prowingen.Owin\Prowingen.Owin.csproj">
       <Project>{88555DCC-72EE-4868-B02E-4CFA5E980457}</Project>
       <Name>Prowingen.Owin</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="web\" />
   </ItemGroup>
 </Project>

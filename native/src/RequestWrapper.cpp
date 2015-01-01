@@ -1,7 +1,7 @@
 #include <dejagnu.h>
 #include "common.h"
 
-ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> message)
+ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> message, bool upgradable)
 {
     _body = std::move(body);
     _message = std::move(message);
@@ -36,6 +36,7 @@ ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxy
     });
     _info.HeaderCount = _headers.size();
     _info.Headers = _headers.data();
+    _info.IsUpgradable = upgradable;
 }
 
 extern void ApiDisposeRequest(ReqContext*req) {

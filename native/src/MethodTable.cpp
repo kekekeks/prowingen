@@ -3,7 +3,7 @@
 #define E(x) (void*)&x
 void* MethodTable[] =
         {
-            E(ApiDisposeRequest),E(ApiAppendHeader),E(ApiAppendBody),E(ApiCompleteResponse)
+            E(ApiDisposeRequest),E(ApiAppendHeader),E(ApiAppendBody),E(ApiCompleteResponse),E(ApiUpgradeResponse)
         };
 
 

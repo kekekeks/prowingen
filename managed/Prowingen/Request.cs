@@ -87,6 +87,7 @@ namespace Prowingen
 		}
 
 		public bool IsSecure {get; private set;}
+		public bool IsUpgradable { get; private set;}
 		public Stream RequestStream { get; private set;}
 
 		internal Request (IntPtr native)
@@ -95,6 +96,7 @@ namespace Prowingen
 			_req = (RequestInfo*)_native;
 			RequestStream = new ProwingenRequestStream (this, _req);
 			IsSecure = _req->IsSecure != 0;
+			IsUpgradable = _req->IsUpgradable != 0;
 		}
 
 

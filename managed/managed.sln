@@ -33,6 +33,6 @@ Global
 		{BE690061-2830-4BA8-B373-1765FD39EA1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Sandbox\Sandbox.csproj
+		StartupItem = WebApiSandbox\WebApiSandbox.csproj
 	EndGlobalSection
 EndGlobal

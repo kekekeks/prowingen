@@ -11,6 +11,8 @@ namespace Prowingen.Owin
 			if (properties == null)
 				throw new ArgumentNullException("properties");
 			properties["owin.Version"] = "1.0";
+			properties ["opaque.Version"] = "1.0";
+			properties ["websocket.Version"] = "1.0";
 		}
 
 		public static IDisposable Create(Func<IDictionary<string, object>, Task> app,

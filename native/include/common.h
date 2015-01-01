@@ -6,7 +6,7 @@
 #include <folly/io/async/EventBaseManager.h>
 #include <proxygen/httpserver/HTTPServer.h>
 #include <proxygen/httpserver/RequestHandlerFactory.h>
-
+#include "CustomResponseBuilder.h"
 extern std::string HttpStatusCodes[];
 extern void InitStatusCodes();
 
@@ -18,7 +18,7 @@ class ReqContext
         std::unique_ptr<proxygen::HTTPMessage> _message;
         std::vector<IOBufInfo> _buffers;
         std::vector<HttpHeader> _headers;
-        ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> message);
+        ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> message, bool upgradable);
 };
 
 class RespContext
@@ -26,7 +26,9 @@ class RespContext
 public:
     ResponseInfo _info;
     bool _beforeHeadersSucceded;
-    std::unique_ptr<proxygen::ResponseBuilder> response;
+    std::unique_ptr<CustomResponseBuilder> response;
+    proxygen::ResponseHandler*_rawResponse;
+    bool _upgraded;
     folly::EventBase*eventBase;
     RespContext(proxygen::ResponseHandler*responseHandler);
 };

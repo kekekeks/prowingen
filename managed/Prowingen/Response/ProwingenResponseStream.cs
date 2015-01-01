@@ -14,6 +14,12 @@ namespace Prowingen
 		{
 			_parent = parent;
 		}
+
+		public void Detach ()
+		{
+			_parent = null;
+			Dispose ();
+		}
 			
 		public override void Flush ()
 		{
@@ -33,17 +39,18 @@ namespace Prowingen
 			}
 			else
 			{
-				if (_bufferPosition + count > _buffer.Length)
+				while (_bufferPosition + count >= _buffer.Length)
 				{
-					var toWrite = _bufferPosition + count - _buffer.Length;
+					var toWrite = (_buffer.Length - _bufferPosition);
 					Buffer.BlockCopy (buffer, offset, _buffer, _bufferPosition, toWrite);
+					_bufferPosition += toWrite;
 					Flush ();
 					offset += toWrite;
 					count -= toWrite;
 				}
 
-
-				Buffer.BlockCopy (buffer, offset, _buffer, _bufferPosition, count);
+				if (count != 0)
+					Buffer.BlockCopy (buffer, offset, _buffer, _bufferPosition, count);
 				_bufferPosition += count;
 
 
@@ -66,10 +73,13 @@ namespace Prowingen
 		{
 			if (_buffer != null)
 			{
-				if (_bufferPosition == 0)
-					_parent.Complete (null, 0, 0);
-				else
-					_parent.Complete (_buffer, 0, _bufferPosition);
+				if (_parent != null)
+				{
+					if (_bufferPosition == 0)
+						_parent.Complete (null, 0, 0);
+					else
+						_parent.Complete (_buffer, 0, _bufferPosition);
+				}
 				BufferManager.ReleaseBuffer (_buffer);
 			}
 

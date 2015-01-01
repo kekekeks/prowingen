@@ -5,7 +5,6 @@ The goal is to create OWIN server based on Facebook's [proxygen](https://github.
 
 Currently I've managed to get 100K requests per second handling requests on *threads from ThreadPool* on my laptop with raw listener. Mono's HttpListener performs way worse, 15K requests per second on the same hardware. [evhttp-sharp](https://github.com/kekekeks/evhttp-sharp) can only do this on it's own threads, i. e. ~90K rps without ThreadPool and ~35K rps with ThreadPool. With WebApi I can get 20-22K rps for now, not sure if that's sufficient, but still faster than anything else. Anyway, I'm doing that mostly to get websocket support.
 
-
 The plan
 --------
 
@@ -16,10 +15,13 @@ The plan
 |Thread pool support|Done|
 |OWIN support|Done|
 |Performance optimization|Some|
-|deb-packages|In progress|
-|Websockets|Planned|
+|[OWIN Opaque Stream](http://owin.org/spec/extensions/owin-OpaqueStream-Extension-v0.2.0.htm)|In progress|
+|[OWIN WebSocket](http://owin.org/spec/extensions/owin-WebSocket-Extension-v0.4.0.htm)|In progress|
+|deb-packages|Planned|
 |HTTPS/SPDY endpoints|Planned|
 
+
+It seems that proxygen doesn't support websockets yet, but it does support protocol upgrade, so I'll use managed implementation for now.
 
 How to compile
 --------------

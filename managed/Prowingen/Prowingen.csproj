@@ -47,11 +47,17 @@
     <Compile Include="Request\ProwingenRequestStream.cs" />
     <Compile Include="Owin\ProwingenOwinServer.cs" />
     <Compile Include="BufferManager.cs" />
+    <Compile Include="Websocket\OpaqueWebsocketSetup.cs" />
+    <Compile Include="Response\ProwingenOpaqueResponseStream.cs" />
+    <Compile Include="Request\DummyInputStream.cs" />
+    <Compile Include="Websocket\ProwingenWebSocketContext.cs" />
+    <Compile Include="Websocket\ProwingenWebSocket.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Response\" />
     <Folder Include="Request\" />
     <Folder Include="Owin\" />
+    <Folder Include="Websocket\" />
   </ItemGroup>
 </Project>

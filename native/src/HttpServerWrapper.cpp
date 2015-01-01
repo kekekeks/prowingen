@@ -1,6 +1,4 @@
 #include "HttpServerWrapper.h"
-#include <proxygen/httpserver/RequestHandler.h>
-#include <proxygen/httpserver/ResponseBuilder.h>
 
 using namespace proxygen;
 using namespace folly;

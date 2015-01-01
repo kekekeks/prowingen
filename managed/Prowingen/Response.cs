@@ -16,6 +16,8 @@ namespace Prowingen
 		public ProwingenResponseHeaders Headers {get; private set;}
 		public bool HeadersAreSent {get; private set;}
 		HttpStatusCode _statusCode;
+
+
 		public HttpStatusCode StatusCode
 		{
 			get
@@ -28,7 +30,7 @@ namespace Prowingen
 				if (v > 0x7fff || v < 0)
 					throw new ArgumentException ("Invalid HTTP status code");
 				_statusCode = value;
-				//_resp->Code = (ushort)v;
+				_resp->Code = (ushort)v;
 			}
 		}
 
@@ -107,6 +109,19 @@ namespace Prowingen
 				}
 			}
 			_native = IntPtr.Zero;
+		}
+
+		public void Upgrade()
+		{
+			if (HeadersAreSent)
+				throw new InvalidOperationException ("It's too late to upgrade");
+			var oldStream = OutputStream as ProwingenResponseStream;
+			if (oldStream == null)
+				throw new InvalidOperationException ();
+			oldStream.Detach ();
+			OutputStream = new ProwingenOpaqueResponseStream (this);
+			OnWrite ();
+			Wrapper.Upgrade (_native);
 		}
 
 

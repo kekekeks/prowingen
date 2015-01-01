@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
 
+using OpaqueUpgrade = System.Action<System.Collections.Generic.IDictionary<string, object>, 
+	System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>>;
+
 namespace Prowingen.Owin
 {
 	public class ProwingenOwinServer : IDisposable
@@ -29,6 +32,8 @@ namespace Prowingen.Owin
 		{
 			_httpServer.Dispose ();
 		}
+
+
 
 		void OnRequest (Request req, Response resp)
 		{
@@ -66,6 +71,32 @@ namespace Prowingen.Owin
 						owin ["server.OnSendingHeaders"] = new Action<Action<object>, object> ((cb, state) => headerCallbacks.Add (Tuple.Create (cb, state)));
 
 
+						bool isUpgraded  = false;
+						if(req.IsUpgradable)
+							owin["opaque.Upgrade"] = new OpaqueUpgrade(async (__, callback)=>
+						{
+								resp.Upgrade();
+								isUpgraded = true;
+								owin ["owin.ResponseBody"] = null;
+								var opaqueEnv = new Dictionary<string, object>()
+								{
+									{"opaque.Version", "1.0"},
+									{"opaque.Input", new DummyInputStream()},
+									{"opaque.Output", resp.OutputStream},
+									{"opaque.CallCancelled", new CancellationToken(false)}
+								};
+								try
+								{
+									await callback(opaqueEnv);
+								}
+								catch(Exception e)
+								{
+									//TODO: log it somehow
+									resp.OutputStream.Dispose();
+								
+								}
+						});
+
 						sendingHeaders = delegate
 						{
 							foreach(var cb in headerCallbacks)
@@ -75,10 +106,11 @@ namespace Prowingen.Owin
 								resp.Headers.Add (hdr.Key, hdr.Value);
 						};
 						resp.SendingHeaders += sendingHeaders;
+						OpaqueWebSocketSetup.SetupEnvironment(owin);
 						await _app (owin);
-						resp.OutputStream.Close ();
 
-					} catch (Exception e)
+					} 
+					catch (Exception e)
 					{
 						resp.SendingHeaders -= sendingHeaders;
 						if (!resp.HeadersAreSent)
