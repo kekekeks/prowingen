@@ -60,10 +60,12 @@ namespace Prowingen
 	{
 		Dictionary<string, object> _wsEnv;
 		Stream _output;
+		Stream _input;
 
 		public ProwingenWebSocket (System.Collections.Generic.IDictionary<string, object> opaqueEnv, System.Collections.Generic.IDictionary<string, object> env)
 		{
 			_output = (Stream)opaqueEnv ["opaque.Output"];
+			_input = (Stream)opaqueEnv ["opaque.Input"];
 			_wsEnv = new Dictionary<string, object>
 			{
 				{ "websocket.SendAsync", new WebSocketSendAsync (SendAsync) },
@@ -75,6 +77,7 @@ namespace Prowingen
 				{ typeof(WebSocketContext).FullName, new ProwingenWebSocketContext(env, this)}
 			};
 		}
+
 
 		public System.Threading.Tasks.Task Handle (WebSocketFunc callback)
 		{

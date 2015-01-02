@@ -1,10 +1,11 @@
 #include <dejagnu.h>
 #include "common.h"
 
-ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> message, bool upgradable)
+ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> message, bool upgradable, std::shared_ptr<OpaqueInputStreamWrapper> opaque)
 {
     _body = std::move(body);
     _message = std::move(message);
+    _opaqueStream = opaque;
     _info.Url = _message->getURL().c_str();
 
     folly::IOBuf* pBody = _body.get();
@@ -41,4 +42,9 @@ ReqContext::ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxy
 
 extern void ApiDisposeRequest(ReqContext*req) {
     delete req;
+}
+
+extern void* ApiUpgradeToOpaqueInputStream(ReqContext* ctx, ProwingenOpaqueInputStreamHandler handler)
+{
+    return InitializeOpaqueInputStream(ctx->_opaqueStream, handler);
 }

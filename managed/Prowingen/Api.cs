@@ -33,9 +33,9 @@ namespace Prowingen
 	}
 		
 	delegate void RequestHandlerDelegate(IntPtr request, IntPtr response);
-
+	unsafe delegate void OpaqueInputStreamHandlerDelegate(int count, IoBufInfo*buffers);
 	#pragma warning disable 649
-	class Wrappers
+	unsafe class Wrappers
 	{
 		public delegate void DisposeDelegate (IntPtr p);
 		public DisposeDelegate DisposeRequest;
@@ -47,6 +47,9 @@ namespace Prowingen
 		public CompleteDelegate Complete;
 		public delegate void UpgradeDelegate(IntPtr r);
 		public UpgradeDelegate Upgrade;
+		public delegate IntPtr UpgradeToOpaqueInputStreamDelegate(IntPtr context, IntPtr handler);
+		public UpgradeToOpaqueInputStreamDelegate UpgradeToOpaqueInputStream;
+		public DisposeDelegate DisposeOpaqueInputStream;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

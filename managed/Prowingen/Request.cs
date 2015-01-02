@@ -9,7 +9,7 @@ namespace Prowingen
 	{
 		static readonly Wrappers Wrapper = Prowingen.Factory.Wrappers.Value;
 		IntPtr _native;
-
+		Stream _opaqueStream;
 		RequestInfo* _req;
 
 		string _pathAndQuery;
@@ -114,6 +114,13 @@ namespace Prowingen
 		{
 			if (_native == IntPtr.Zero)
 				throw new ObjectDisposedException (this.GetType ().Name);
+		}
+
+		public Stream Upgrade()
+		{
+			if (!IsUpgradable)
+				throw new InvalidOperationException ();
+			return _opaqueStream ?? (_opaqueStream = new ProwingenOpaqueInputStream (_native));
 		}
 	}
 }

@@ -1,12 +1,9 @@
 #ifndef COMMON_H_INCLUDED
 #define COMMON_H_INCLUDED
 #include "api.h"
-#include <folly/Memory.h>
-#include <folly/Portability.h>
-#include <folly/io/async/EventBaseManager.h>
-#include <proxygen/httpserver/HTTPServer.h>
-#include <proxygen/httpserver/RequestHandlerFactory.h>
+#include "util.h"
 #include "CustomResponseBuilder.h"
+#include "OpaqueInputStream.h"
 extern std::string HttpStatusCodes[];
 extern void InitStatusCodes();
 
@@ -18,7 +15,10 @@ class ReqContext
         std::unique_ptr<proxygen::HTTPMessage> _message;
         std::vector<IOBufInfo> _buffers;
         std::vector<HttpHeader> _headers;
-        ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> message, bool upgradable);
+
+        //private for native implementation
+        std::shared_ptr<OpaqueInputStreamWrapper> _opaqueStream;
+        ReqContext(std::unique_ptr<folly::IOBuf> body, std::unique_ptr<proxygen::HTTPMessage> message, bool upgradable, std::shared_ptr<OpaqueInputStreamWrapper> opaqueStream);
 };
 
 class RespContext
@@ -43,9 +43,8 @@ public:
 };
 
 extern proxygen::RequestHandler* CreateHandler(ProwingenRequestHandler requestHandler);
-struct EventBaseHolder
-{
-    folly::EventBase* EventBase;
-};
-extern folly::ThreadLocalPtr<EventBaseHolder> ThreadEventBase;
+
+
+
+
 #endif // COMMON_H_INCLUDED

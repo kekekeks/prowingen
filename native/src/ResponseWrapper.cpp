@@ -4,14 +4,6 @@ using namespace proxygen;
 using namespace folly;
 
 
-folly::EventBase*GetCurrentEventBase()
-{
-    auto holder = ThreadEventBase.get();
-    if(holder== nullptr)
-        return nullptr;
-    return  holder->EventBase;
-}
-
 RespContext::RespContext(proxygen::ResponseHandler*responseHandler)
 {
     _info.StatusCode = 200;
@@ -21,17 +13,6 @@ RespContext::RespContext(proxygen::ResponseHandler*responseHandler)
     _upgraded = false;
     eventBase = GetCurrentEventBase();
     DCHECK(eventBase!=NULL);
-}
-
-
-static void ExecOnEventBase(folly::EventBase*base, folly::Cob cb)
-{
-    auto currentEventBase = GetCurrentEventBase();
-    if(currentEventBase != base)
-        base->runInEventBaseThread(cb);
-    else
-        cb();
-
 }
 
 inline void BeforeHeaders(RespContext *context) {

@@ -95,13 +95,14 @@ namespace Prowingen.Owin
 
 						if(opaqueUpgrade != null)
 						{
-
+							var inputStream = req.Upgrade();
 							var outputStream = resp.Upgrade();
+
 							owin ["owin.ResponseBody"] = null;
 							var opaqueEnv = new Dictionary<string, object>()
 							{
 								{"opaque.Version", "1.0"},
-								{"opaque.Input", new DummyInputStream()},
+								{"opaque.Input", inputStream},
 								{"opaque.Output", outputStream},
 								{"opaque.CallCancelled", new CancellationToken(false)}
 							};

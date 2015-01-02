@@ -15,7 +15,8 @@ set(SOURCE_FILES
     src/RequestWrapper.cpp
     src/ResponseWrapper.cpp
     src/StatusCodes.cpp
-    src/MethodTable.cpp)
+    src/MethodTable.cpp
+    src/OpaqueInputStream.cpp)
 
 include_directories(include ../proxygen/proxygen/fbthrift/thrift/folly ../proxygen/proxygen/fbthrift ../proxygen)
 

@@ -42,7 +42,7 @@ struct ResponseInfo
 };
 
 typedef void (*ProwingenRequestHandler)(void*,void*);
-
+typedef void (*ProwingenOpaqueInputStreamHandler)(int,IOBufInfo*);
 
 
 struct IHttpServer : public IUnknown
@@ -70,7 +70,8 @@ extern void ApiAppendHeader(RespContext*builder, char* key, char* value);
 extern void ApiAppendBody(RespContext*builder, void* data, int size, bool flush);
 extern void ApiCompleteResponse(RespContext*builder, void* data, int size);
 extern void ApiUpgradeResponse(RespContext*context);
-
+extern void* ApiUpgradeToOpaqueInputStream(ReqContext* ctx, ProwingenOpaqueInputStreamHandler handler);
+extern void ApiDisposeOpaqueInputStream(void*handle);
 
 extern const GUID IID_IHttpServer;
 extern const GUID IID_IProwingenFactory;

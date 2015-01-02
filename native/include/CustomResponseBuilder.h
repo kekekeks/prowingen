@@ -77,6 +77,7 @@
         }
 
         void send() {
+            txn_->resumeIngress();
             // Once we send them, we don't want to send them again
             SCOPE_EXIT { headers_.reset(); };
 
@@ -132,6 +133,7 @@
                 headers_->constructDirectResponse({1, 1}, 101, "Switching Protocols");
             }
             txn_->sendHeaders(*headers_);
+            txn_->resumeIngress();
         }
 
     };
