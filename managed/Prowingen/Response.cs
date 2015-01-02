@@ -111,17 +111,15 @@ namespace Prowingen
 			_native = IntPtr.Zero;
 		}
 
-		public void Upgrade()
+		public Stream Upgrade()
 		{
 			if (HeadersAreSent)
 				throw new InvalidOperationException ("It's too late to upgrade");
-			var oldStream = OutputStream as ProwingenResponseStream;
-			if (oldStream == null)
-				throw new InvalidOperationException ();
-			oldStream.Detach ();
-			OutputStream = new ProwingenOpaqueResponseStream (this);
+			((ProwingenResponseStream)OutputStream).Detach ();
+			OutputStream = null;
 			OnWrite ();
 			Wrapper.Upgrade (_native);
+			return new ProwingenOpaqueResponseStream (this);
 		}
 
 

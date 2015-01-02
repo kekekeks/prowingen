@@ -15,7 +15,7 @@ namespace Prowingen
 			_parent = parent;
 		}
 
-		public void Detach ()
+		internal void Detach ()
 		{
 			_parent = null;
 			Dispose ();
